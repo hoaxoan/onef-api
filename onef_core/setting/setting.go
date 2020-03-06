@@ -1,4 +1,4 @@
-package settings
+package setting
 
 import (
 	"fmt"
@@ -10,10 +10,10 @@ import (
 var Config ConfigSchema
 
 func init() {
-	viper.SetConfigName("config")   // name of config file (without extension)
-	viper.AddConfigPath("./config") // optionally look for config in the working directory
-	err := viper.ReadInConfig()     // Find and read the config file
-	if err != nil {                 // Handle errors reading the config file
+	viper.SetConfigName("setting")   // name of config file (without extension)
+	viper.AddConfigPath("./setting") // optionally look for config in the working directory
+	err := viper.ReadInConfig()      // Find and read the config file
+	if err != nil {                  // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 

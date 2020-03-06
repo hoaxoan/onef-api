@@ -3,11 +3,21 @@ package usecase
 import (
 	"context"
 	"log"
-	"github.com/hoaxoan/nc_user/user"
-	"github.com/hoaxoan/nc_user/user/service"
+
 	"github.com/hoaxoan/nc_user/model"
+	"github.com/hoaxoan/nc_user/user"
+	"github.com/hoaxoan/onef-api/onef_auth/service"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// import (
+// 	"context"
+// 	"log"
+// 	"github.com/hoaxoan/onef-api/onef_auth"
+// 	"github.com/hoaxoan/onef-api/onef_auth/service"
+// 	"github.com/hoaxoan/onef-api/onef_model"
+// 	"golang.org/x/crypto/bcrypt"
+// )
 
 type userUsecase struct {
 	Repo         user.Repository
@@ -16,7 +26,7 @@ type userUsecase struct {
 
 func NewUserUsecase(repo user.Repository, tokenService service.Authable) user.Usecase {
 	return &userUsecase{
-		Repo:    repo,
+		Repo:         repo,
 		TokenService: tokenService,
 	}
 }
@@ -60,23 +70,22 @@ func (ucase *userUsecase) Update(ctx context.Context, req *model.User, res *mode
 		return err
 	}
 
-	if (req.Password != ""){
+	if req.Password != "" {
 		hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return err
 		}
 		req.Password = string(hashedPass)
-	} else if (existUser.Password != "") {		
+	} else if existUser.Password != "" {
 		req.Password = existUser.Password
 	}
-	
+
 	if err := ucase.Repo.Update(req); err != nil {
 		return err
 	}
 	res.User = req
 	return nil
 }
-
 
 func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.Token) error {
 	log.Println("Logging in with:", req.Email, req.Password)

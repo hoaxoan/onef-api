@@ -1,13 +1,14 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/dgrijalva/jwt-go"
-	"github.com/hoaxoan/nc_user/config"
 	"github.com/hoaxoan/nc_user/model"
 	"github.com/hoaxoan/nc_user/user"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"net/http"
+	"honnef.co/go/tools/config"
 )
 
 type userHandler struct {

@@ -2,8 +2,9 @@ package repository
 
 import (
 	"context"
-	"github.com/hoaxoan/nc_user/user"
+
 	"github.com/hoaxoan/nc_user/model"
+	"github.com/hoaxoan/nc_user/user"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )

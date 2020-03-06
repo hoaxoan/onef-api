@@ -1,7 +1,8 @@
-package user
+package onef_auth
 
 import (
 	"context"
+
 	"github.com/hoaxoan/nc_user/model"
 )
 

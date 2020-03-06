@@ -1,12 +1,21 @@
 package service
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"github.com/hoaxoan/nc_user/user"
-	"github.com/hoaxoan/nc_user/model"
-	"github.com/hoaxoan/nc_user/config"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/hoaxoan/nc_user/model"
+	"github.com/hoaxoan/nc_user/user"
+	"honnef.co/go/tools/config"
 )
+
+// import (
+// 	"github.com/dgrijalva/jwt-go"
+// 	"github.com/hoaxoan/onef-api/onef_auth"
+// 	"github.com/hoaxoan/onef-api/onef_model"
+// 	"github.com/hoaxoan/onef-api/onef_core"
+// 	"time"
+// )
 
 var (
 	// Define a secure key string used
@@ -22,11 +31,11 @@ type Authable interface {
 }
 
 type tokenService struct {
-	Repo        user.Repository
+	Repo user.Repository
 }
 
 func NewTokeService(repo user.Repository) Authable {
-	return &tokenService{Repo:    repo}
+	return &tokenService{Repo: repo}
 }
 
 // Decode a token string into a token object

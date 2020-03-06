@@ -1,9 +1,6 @@
-package user
+package onef_auth
 
-import (
-	"github.com/hoaxoan/nc_user/model"
-)
-
+import "github.com/hoaxoan/nc_user/model"
 
 type Repository interface {
 	GetAll() ([]*model.User, error)

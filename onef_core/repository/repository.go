@@ -5,14 +5,14 @@ import (
 	"log"
 	"time"
 
-	"github.com/hoaxoan/nc_user/config"
+	"github.com/hoaxoan/onef-api/onef_core/setting"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func Connection() (*mongo.Client, error) {
-	client, err := mongo.NewClient(options.Client().ApplyURI(config.Config.Mongo.Uri))
+	client, err := mongo.NewClient(options.Client().ApplyURI(setting.Config.Mongo.Uri))
 	if err != nil {
 		log.Fatalf("connect error :%v", err)
 		return nil, err
