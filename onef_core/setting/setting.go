@@ -1,19 +1,18 @@
 package setting
 
 import (
-	"fmt"
-	"log"
+	"net/http"
 
-	"github.com/spf13/viper"
+	"github.com/hoaxoan/onef-api/onef_auth/base"
+	"github.com/hoaxoan/onef-api/onef_core/model"
+	"github.com/hoaxoan/onef-api/onef_core/setting"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
-
-var Config ConfigSchema
-
-func init() {
-	viper.SetConfigName("setting")   // name of config file (without extension)
-	viper.AddConfigPath("./setting") // optionally look for config in the working directory
-	err := viper.ReadInConfig()      // Find and read the config file
-	if err != nil {                  // Handle errors reading the config file
+	err := viper.ReadInConfig()                // Find and read the config file
+	if err != nil {                            // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 

@@ -3,19 +3,21 @@ package http
 import (
 	"net/http"
 
+	"github.com/hoaxoan/onef-api/onef_auth/base"
+	"github.com/hoaxoan/onef-api/onef_core/model"
+	"github.com/hoaxoan/onef-api/onef_core/setting"
+
 	"github.com/dgrijalva/jwt-go"
-	"github.com/hoaxoan/nc_user/model"
-	"github.com/hoaxoan/nc_user/user"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"honnef.co/go/tools/config"
 )
 
 type userHandler struct {
-	UUcase user.Usecase
+	UUcase base.Usecase
 }
 
-func NewUserHandler(e *echo.Echo, uc user.Usecase) {
+func NewUserHandler(e *echo.Echo, uc base.Usecase) {
 	handler := &userHandler{
 		UUcase: uc,
 	}
@@ -26,7 +28,7 @@ func NewUserHandler(e *echo.Echo, uc user.Usecase) {
 
 func PrivateRoute(e *echo.Echo, handler *userHandler) {
 	JWTConfig := middleware.JWTConfig{
-		SigningKey: []byte(config.Config.JWTSecret.JWTKey),
+		SigningKey: []byte(setting.Config.JWTSecret.JWTKey),
 		Claims:     &model.CustomClaims{},
 	}
 

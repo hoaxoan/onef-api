@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/hoaxoan/nc_user/model"
-	"github.com/hoaxoan/nc_user/user"
+	"github.com/hoaxoan/onef-api/onef_auth/base"
+	"github.com/hoaxoan/onef-api/onef_core/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -18,7 +18,7 @@ type userRepository struct {
 	Client *mongo.Client
 }
 
-func NewUserRepository(Client *mongo.Client) user.Repository {
+func NewUserRepository(Client *mongo.Client) base.Repository {
 	return &userRepository{Client}
 }
 

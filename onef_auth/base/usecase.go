@@ -1,9 +1,9 @@
-package onef_auth
+package base
 
 import (
 	"context"
 
-	"github.com/hoaxoan/nc_user/model"
+	"github.com/hoaxoan/onef-api/onef_core/model"
 )
 
 type Usecase interface {

@@ -4,18 +4,10 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/hoaxoan/nc_user/model"
-	"github.com/hoaxoan/nc_user/user"
+	"github.com/hoaxoan/onef-api/onef_auth/base"
+	"github.com/hoaxoan/onef-api/onef_core/model"
 	"honnef.co/go/tools/config"
 )
-
-// import (
-// 	"github.com/dgrijalva/jwt-go"
-// 	"github.com/hoaxoan/onef-api/onef_auth"
-// 	"github.com/hoaxoan/onef-api/onef_model"
-// 	"github.com/hoaxoan/onef-api/onef_core"
-// 	"time"
-// )
 
 var (
 	// Define a secure key string used
@@ -31,10 +23,10 @@ type Authable interface {
 }
 
 type tokenService struct {
-	Repo user.Repository
+	Repo base.Repository
 }
 
-func NewTokeService(repo user.Repository) Authable {
+func NewTokeService(repo base.Repository) Authable {
 	return &tokenService{Repo: repo}
 }
 

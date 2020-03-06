@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_core/repository"
 	"github.com/hoaxoan/onef-api/onef_core/setting"
 	"github.com/labstack/echo/v4"
@@ -15,15 +16,12 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Recover())
-	_, err := repository.Connection()
+	client, err := repository.Connection()
 	if err != nil {
 		log.Fatalf("Could not connect to DB: %v", err)
 	}
 
-	// usRepo := _userRepository.NewUserRepository(client)
-	// tokenService := _userSerice.NewTokeService(usRepo)
-	// uu := _userUsecase.NewUserUsecase(usRepo, tokenService)
-	// _userHttpDeliver.NewUserHandler(e, uu)
+	base.NewHandler(client)
 
 	log.Println(e.Start(":9090"))
 }

@@ -1,8 +1,10 @@
-package onef_auth
+package base
 
-import "github.com/hoaxoan/nc_user/model"
+import (
+	"context"
 
-type Repository interface {
+	"github.com/hoaxoan/onef-api/onef_core/model"
+)
 	GetAll() ([]*model.User, error)
 	Get(id int) (*model.User, error)
 	GetByEmail(email string) (*model.User, error)

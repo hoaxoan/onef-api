@@ -1,4 +1,4 @@
-package onef_model
+package model
 
 type Error struct {
 	Code        int32  `json:"code,omitempty"`
