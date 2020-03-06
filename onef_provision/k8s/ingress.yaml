@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: user-ingress
+  annotations:
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /api/user/
+            backend:
+              serviceName: user-svc
+              servicePort: 9090
