@@ -10,7 +10,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"honnef.co/go/tools/config"
 )
 
 type userHandler struct {

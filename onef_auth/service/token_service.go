@@ -6,7 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_core/model"
-	"honnef.co/go/tools/config"
+	"github.com/hoaxoan/onef-api/onef_core/setting"
 )
 
 var (
@@ -34,7 +34,7 @@ func NewTokeService(repo base.Repository) Authable {
 func (srv *tokenService) Decode(token string) (*model.CustomClaims, error) {
 
 	// Parse the token
-	signKey := []byte(config.Config.JWTSecret.JWTKey)
+	signKey := []byte(setting.Config.JWTSecret.JWTKey)
 	tokenType, err := jwt.ParseWithClaims(token, &model.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return signKey, nil
 	})
@@ -59,7 +59,7 @@ func (srv *tokenService) Encode(user *model.User) (string, error) {
 	}
 
 	// Create token
-	signKey := []byte(config.Config.JWTSecret.JWTKey)
+	signKey := []byte(setting.Config.JWTSecret.JWTKey)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign token and return
