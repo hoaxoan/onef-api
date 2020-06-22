@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/hoaxoan/onef-api/auth"
+	"github.com/hoaxoan/onef-api/onef_auth"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
@@ -18,7 +18,7 @@ type userRepository struct {
 	Client *mongo.Client
 }
 
-func NewUserRepository(Client *mongo.Client) auth.Repository {
+func NewUserRepository(Client *mongo.Client) onef_auth.Repository {
 	return &userRepository{Client}
 }
 

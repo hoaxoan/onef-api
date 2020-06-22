@@ -1,4 +1,4 @@
-package auth
+package onef_auth
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-package auth
+package onef_auth
 
 import (
 	"github.com/hoaxoan/onef-api/onef_core/model"
