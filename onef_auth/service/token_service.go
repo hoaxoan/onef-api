@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/hoaxoan/onef-api/auth"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_core/setting"
 )
@@ -22,10 +23,10 @@ type Authable interface {
 }
 
 type tokenService struct {
-	Repo base.Repository
+	Repo auth.Repository
 }
 
-func NewTokeService(repo base.Repository) Authable {
+func NewTokeService(repo auth.Repository) Authable {
 	return &tokenService{Repo: repo}
 }
 

@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/hoaxoan/onef-api/auth"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_core/setting"
 
@@ -12,10 +13,10 @@ import (
 )
 
 type userHandler struct {
-	UUcase base.Usecase
+	UUcase auth.Usecase
 }
 
-func NewUserHandler(e *echo.Echo, uc base.Usecase) {
+func NewUserHandler(e *echo.Echo, uc auth.Usecase) {
 	handler := &userHandler{
 		UUcase: uc,
 	}

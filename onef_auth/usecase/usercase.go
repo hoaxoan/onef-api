@@ -4,17 +4,18 @@ import (
 	"context"
 	"log"
 
+	"github.com/hoaxoan/onef-api/auth"
 	"github.com/hoaxoan/onef-api/onef_auth/service"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userUsecase struct {
-	Repo         base.Repository
+	Repo         auth.Repository
 	TokenService service.Authable
 }
 
-func NewUserUsecase(repo base.Repository, tokenService service.Authable) base.Usecase {
+func NewUserUsecase(repo auth.Repository, tokenService service.Authable) auth.Usecase {
 	return &userUsecase{
 		Repo:         repo,
 		TokenService: tokenService,
