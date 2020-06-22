@@ -3,7 +3,6 @@ package http
 import (
 	"net/http"
 
-	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_core/setting"
 
