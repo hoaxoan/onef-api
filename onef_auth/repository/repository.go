@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 
-	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"

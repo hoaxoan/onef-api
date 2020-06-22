@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_auth/service"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"golang.org/x/crypto/bcrypt"

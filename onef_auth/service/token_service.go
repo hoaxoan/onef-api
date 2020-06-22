@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/hoaxoan/onef-api/onef_auth/base"
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_core/setting"
 )
