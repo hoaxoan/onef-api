@@ -8,3 +8,12 @@ type Task struct {
 	IsCompleted string `json:"email,omitempty" bson:"email"`
 	IsFlaged    string `json:"password,omitempty" bson:"password"`
 }
+
+type TaskRequest struct {
+}
+
+type TaskResponse struct {
+	Task   *Task    `json:"task,omitempty" bson:"task"`
+	Tasks  []*Task  `json:"tasks,omitempty" bson:"tasks"`
+	Errors []*Error `json:"errors,omitempty" bson:"errors"`
+}

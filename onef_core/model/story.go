@@ -8,3 +8,12 @@ type Story struct {
 	IsCompleted string `json:"email,omitempty" bson:"email"`
 	IsFlaged    string `json:"password,omitempty" bson:"password"`
 }
+
+type StoryRequest struct {
+}
+
+type StoryResponse struct {
+	Story   *Story   `json:"story,omitempty" bson:"story"`
+	Stories []*Story `json:"stories,omitempty" bson:"stories"`
+	Errors  []*Error `json:"errors,omitempty" bson:"errors"`
+}

@@ -16,7 +16,7 @@ type userHandler struct {
 	UUcase onef_auth.Usecase
 }
 
-func NewUserHandler(e *echo.Echo, uc onef_auth.Usecase) {
+func NewHandler(e *echo.Echo, uc onef_auth.Usecase) {
 	handler := &userHandler{
 		UUcase: uc,
 	}
@@ -31,30 +31,50 @@ func PrivateRoute(e *echo.Echo, handler *userHandler) {
 		Claims:     &model.CustomClaims{},
 	}
 
-	g := e.Group("/api/user/v1/private")
+	g := e.Group("/api/v1/auth")
 	g.Use(middleware.JWTWithConfig(JWTConfig))
-	g.PUT("/user", handler.Update)
+	g.PUT("/user/update", handler.Update)
 }
 
 func PublicRoute(e *echo.Echo, handler *userHandler) {
-	g := e.Group("/api/user/v1/public")
-	g.PATCH("/user/login", handler.Auth)
-	g.POST("/user/register", handler.Register)
+	g := e.Group("/api/v1/auth")
+	g.PATCH("/login", handler.Login)
+	g.POST("/register", handler.Register)
+}
+
+func (h *userHandler) Login(ctx echo.Context) error {
+	var user model.User
+	if err := ctx.Bind(&user); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var token model.Token
+	err := h.UUcase.Auth(ctx.Request().Context(), &user, &token)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, token)
 }
 
 func (h *userHandler) Register(ctx echo.Context) error {
 	var user model.User
 	if err := ctx.Bind(&user); err != nil {
-		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "bad request"})
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	var res model.UserResponse
-	err := h.UUcase.Create(ctx.Request().Context(), &user, &res)
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "bad request"})
+	if err := h.UUcase.Create(ctx.Request().Context(), &user, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusOK, res.User)
+	var token model.Token
+	err := h.UUcase.GetToken(ctx.Request().Context(), &user, &token)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, token)
 }
 
 func (h *userHandler) Update(ctx echo.Context) error {
@@ -84,19 +104,4 @@ func (h *userHandler) Update(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, res.User)
-}
-
-func (h *userHandler) Auth(ctx echo.Context) error {
-	var user model.User
-	if err := ctx.Bind(&user); err != nil {
-		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "bad request"})
-	}
-
-	var token model.Token
-	err := h.UUcase.Auth(ctx.Request().Context(), &user, &token)
-	if err != nil {
-		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "bad request"})
-	}
-
-	return ctx.JSON(http.StatusOK, token)
 }

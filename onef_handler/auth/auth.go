@@ -12,6 +12,6 @@ import (
 func NewHandler(e *echo.Echo, client *mongo.Client) {
 	repo := repository.NewUserRepository(client)
 	tokenService := service.NewTokeService(repo)
-	usecase := usecase.NewUserUsecase(repo, tokenService)
-	http.NewUserHandler(e, usecase)
+	usecase := usecase.NewUsecase(repo, tokenService)
+	http.NewHandler(e, usecase)
 }

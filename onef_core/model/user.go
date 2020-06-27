@@ -3,16 +3,16 @@ package model
 import "github.com/dgrijalva/jwt-go"
 
 type User struct {
-	Id          int          `json:"id,omitempty" bson:"id"`
-	UserName    string       `json:"user_name,omitempty" bsn:"user_name"`
-	Email       string       `json:"email,omitempty" bson:"email"`
-	Password    string       `json:"password,omitempty" bson:"password"`
-	UserProfile *UserProfile `json"profile,omitempty"`
+	Id       int          `json:"id,omitempty" bson:"id"`
+	UserName string       `json:"username,omitempty" bson:"username"`
+	Email    string       `json:"email,omitempty" bson:"email"`
+	Password string       `json:"password,omitempty" bson:"password"`
+	Profile  *UserProfile `json:"profile,omitempty" bson:"profile"`
 }
 
 type UserProfile struct {
 	Id       int    `json:"id,omitempty" bson:"id"`
-	Name     string `json:"name,omitempty" bsn:"name"`
+	Name     string `json:"name,omitempty" bson:"name"`
 	Avatar   string `json:"avatar,omitempty" bson:"avatar"`
 	Cover    string `json:"cover,omitempty" bson:"cover"`
 	Bio      string `json:"bio,omitempty" bson:"bio"`
@@ -31,13 +31,14 @@ type UserRequest struct {
 }
 
 type UserResponse struct {
-	User   *User    `json"user,omitempty"`
-	Users  []*User  `json:"users,omitempty"`
-	Errors []*Error `json:"errors,omitempty"`
+	User   *User    `json:"user,omitempty" bson:"user"`
+	Users  []*User  `json:"users,omitempty" bson:"users"`
+	Errors []*Error `json:"errors,omitempty" bson:"errors"`
 }
 
 type Token struct {
-	Token  string   `jon:"token,omitempty"`
-	Valid  bool     `json:"valid,omitempty"`
-	Errors []*Error `json:"errors,omitempty"`
+	Email  string   `json:"email,omitempty" bson:"email"`
+	Token  string   `json:"token,omitempty" bson:"token"`
+	Valid  bool     `json:"valid,omitempty" bson:"valid"`
+	Errors []*Error `json:"errors,omitempty" bson:"errors"`
 }

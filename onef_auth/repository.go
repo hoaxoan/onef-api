@@ -10,4 +10,5 @@ type Repository interface {
 	GetByEmail(email string) (*model.User, error)
 	Create(user *model.User) error
 	Update(user *model.User) error
+	IsEmailToken(email string) bool
 }

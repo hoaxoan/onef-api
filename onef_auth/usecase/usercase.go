@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/hoaxoan/onef-api/onef_auth"
@@ -15,7 +16,7 @@ type userUsecase struct {
 	TokenService service.Authable
 }
 
-func NewUserUsecase(repo onef_auth.Repository, tokenService service.Authable) onef_auth.Usecase {
+func NewUsecase(repo onef_auth.Repository, tokenService service.Authable) onef_auth.Usecase {
 	return &userUsecase{
 		Repo:         repo,
 		TokenService: tokenService,
@@ -41,7 +42,9 @@ func (ucase *userUsecase) GetAll(ctx context.Context, req *model.UserRequest, re
 }
 
 func (ucase *userUsecase) Create(ctx context.Context, req *model.User, res *model.UserResponse) error {
-
+	if isToken := ucase.Repo.IsEmailToken(req.Email); isToken == true {
+		return errors.New("An account for the email already exists.")
+	}
 	// Generates a hashed version of our password
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -86,9 +89,8 @@ func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.
 		return err
 	}
 
-	// Compares our given password against the hashed password
-	// stored in the database
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+	// Compares our given password against the hashed password stored in the database
+	if err := bcrypt.CompareHashAndPassword([]byte(req.Password), []byte(string(user.Password))); err != nil {
 		return err
 	}
 
@@ -96,6 +98,7 @@ func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.
 	if err != nil {
 		return err
 	}
+	res.Email = user.Email
 	res.Token = token
 	return nil
 }
@@ -116,5 +119,15 @@ func (ucase *userUsecase) ValidateToken(ctx context.Context, req *model.Token, r
 
 	res.Valid = true
 
+	return nil
+}
+
+func (ucase *userUsecase) GetToken(ctx context.Context, req *model.User, res *model.Token) error {
+	token, err := ucase.TokenService.Encode(req)
+	if err != nil {
+		return err
+	}
+	res.Email = req.Email
+	res.Token = token
 	return nil
 }

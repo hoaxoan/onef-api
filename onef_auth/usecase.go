@@ -13,4 +13,5 @@ type Usecase interface {
 	Update(ctx context.Context, req *model.User, res *model.UserResponse) error
 	Auth(ctx context.Context, req *model.User, res *model.Token) error
 	ValidateToken(ctx context.Context, req *model.Token, res *model.Token) error
+	GetToken(ctx context.Context, req *model.User, res *model.Token) error
 }

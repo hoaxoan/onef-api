@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	DbName  = "nc_student"
+	DbName  = "onef"
 	ColName = "user"
 )
 
@@ -18,7 +18,7 @@ type userRepository struct {
 	Client *mongo.Client
 }
 
-func NewUserRepository(Client *mongo.Client) onef_auth.Repository {
+func NewRepository(Client *mongo.Client) onef_auth.Repository {
 	return &userRepository{Client}
 }
 
@@ -75,4 +75,19 @@ func (repo *userRepository) Update(user *model.User) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *userRepository) IsEmailToken(email string) bool {
+	var user *model.User
+	filter := bson.M{"email": email}
+	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return false
+	}
+
+	if user != nil && user.Email == email {
+		return true
+	}
+
+	return false
 }
