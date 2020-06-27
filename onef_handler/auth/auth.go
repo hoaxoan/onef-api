@@ -10,7 +10,7 @@ import (
 )
 
 func NewHandler(e *echo.Echo, client *mongo.Client) {
-	repo := repository.NewUserRepository(client)
+	repo := repository.NewRepository(client)
 	tokenService := service.NewTokeService(repo)
 	usecase := usecase.NewUsecase(repo, tokenService)
 	http.NewHandler(e, usecase)

@@ -1,12 +1,12 @@
 package repository
 
 import (
-	"github.com/hoaxoan/onef-api/onef_story/delivery/http"
-	"github.com/hoaxoan/onef-api/onef_story/repository"
-	"github.com/hoaxoan/onef-api/onef_story/usecase"
-	"github.com/labstack/echo/v4"
+	"context"
+
+	"github.com/hoaxoan/onef-api/onef_core/model"
+	"github.com/hoaxoan/onef-api/onef_story"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-)
 )
 
 const (

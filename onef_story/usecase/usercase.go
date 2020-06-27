@@ -2,22 +2,18 @@ package usecase
 
 import (
 	"context"
-	"errors"
-	"log"
 
-	"github.com/hoaxoan/onef-api/onef_story"
-	"github.com/hoaxoan/onef-api/onef_story/service"
 	"github.com/hoaxoan/onef-api/onef_core/model"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/hoaxoan/onef-api/onef_story"
 )
 
 type storyUsecase struct {
-	Repo         onef_story.Repository
+	Repo onef_story.Repository
 }
 
 func NewUsecase(repo onef_story.Repository) onef_story.Usecase {
 	return &storyUsecase{
-		Repo:         repo
+		Repo: repo,
 	}
 }
 
