@@ -5,6 +5,7 @@ import (
 
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_task"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,12 +40,15 @@ func (repo *taskRepository) GetAll() ([]*model.Task, error) {
 	return tasks, nil
 }
 
-func (repo *taskRepository) Get(id int) (*model.Task, error) {
-	var task *model.Task
-	task.Id = id
-	filter := bson.M{"id": id}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&task)
+func (repo *taskRepository) Get(id string) (*model.Task, error) {
+	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		return nil, err
+	}
+
+	var task *model.Task
+	filter := bson.M{"_id": objId}
+	if err := repo.collection().FindOne(context.TODO(), filter).Decode(&task); err != nil {
 		return nil, err
 	}
 	return task, nil

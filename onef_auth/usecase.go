@@ -7,8 +7,8 @@ import (
 )
 
 type Usecase interface {
-	Get(ctx context.Context, req *model.User, res *model.UserResponse) error
 	GetAll(ctx context.Context, req *model.UserRequest, res *model.UserResponse) error
+	Get(ctx context.Context, id string, res *model.UserResponse) error
 	Create(ctx context.Context, req *model.User, res *model.UserResponse) error
 	Update(ctx context.Context, req *model.User, res *model.UserResponse) error
 	Auth(ctx context.Context, req *model.User, res *model.Token) error

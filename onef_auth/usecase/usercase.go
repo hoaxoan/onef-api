@@ -23,21 +23,21 @@ func NewUsecase(repo onef_auth.Repository, tokenService service.Authable) onef_a
 	}
 }
 
-func (ucase *userUsecase) Get(ctx context.Context, req *model.User, res *model.UserResponse) error {
-	user, err := ucase.Repo.Get(req.Id)
-	if err != nil {
-		return err
-	}
-	res.User = user
-	return nil
-}
-
 func (ucase *userUsecase) GetAll(ctx context.Context, req *model.UserRequest, res *model.UserResponse) error {
 	users, err := ucase.Repo.GetAll()
 	if err != nil {
 		return err
 	}
 	res.Users = users
+	return nil
+}
+
+func (ucase *userUsecase) Get(ctx context.Context, id string, res *model.UserResponse) error {
+	user, err := ucase.Repo.Get(id)
+	if err != nil {
+		return err
+	}
+	res.User = user
 	return nil
 }
 

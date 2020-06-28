@@ -6,7 +6,7 @@ import (
 
 type Repository interface {
 	GetAll() ([]*model.Task, error)
-	Get(id int) (*model.Task, error)
+	Get(id string) (*model.Task, error)
 	Create(task *model.Task) error
 	Update(task *model.Task) error
 }

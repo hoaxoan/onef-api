@@ -6,6 +6,7 @@ import (
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_story"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -39,12 +40,15 @@ func (repo *storyRepository) GetAll() ([]*model.Story, error) {
 	return stoies, nil
 }
 
-func (repo *storyRepository) Get(id int) (*model.Story, error) {
-	var story *model.Story
-	story.Id = id
-	filter := bson.M{"id": id}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&story)
+func (repo *storyRepository) Get(id string) (*model.Story, error) {
+	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		return nil, err
+	}
+
+	var story *model.Story
+	filter := bson.M{"_id": objId}
+	if err := repo.collection().FindOne(context.TODO(), filter).Decode(&story); err != nil {
 		return nil, err
 	}
 	return story, nil
@@ -61,6 +65,15 @@ func (repo *storyRepository) Create(story *model.Story) error {
 func (repo *storyRepository) Update(story *model.Story) error {
 	filter := bson.M{"_id": story.Id}
 	_, err := repo.collection().UpdateOne(context.TODO(), filter, bson.M{"$set": story})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *storyRepository) Delete(story *model.Story) error {
+	filter := bson.M{"_id": story.Id}
+	_, err := repo.collection().DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return err
 	}

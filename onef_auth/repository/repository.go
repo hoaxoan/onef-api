@@ -5,6 +5,7 @@ import (
 
 	"github.com/hoaxoan/onef-api/onef_auth"
 	"github.com/hoaxoan/onef-api/onef_core/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -39,12 +40,15 @@ func (repo *userRepository) GetAll() ([]*model.User, error) {
 	return users, nil
 }
 
-func (repo *userRepository) Get(id int) (*model.User, error) {
-	var user *model.User
-	user.Id = id
-	filter := bson.M{"id": id}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
+func (repo *userRepository) Get(id string) (*model.User, error) {
+	objId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
+		return nil, err
+	}
+
+	var user *model.User
+	filter := bson.M{"_id": objId}
+	if err := repo.collection().FindOne(context.TODO(), filter).Decode(&user); err != nil {
 		return nil, err
 	}
 	return user, nil

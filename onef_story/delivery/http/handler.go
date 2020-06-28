@@ -23,7 +23,52 @@ func NewHandler(e *echo.Echo, uc onef_story.Usecase) {
 
 func PublicRoute(e *echo.Echo, handler *storyHandler) {
 	g := e.Group("/api/v1/story")
-	g.PATCH("/story", handler.Create)
+	g.PATCH("/stories", handler.GetAll)
+	g.PATCH("/search", handler.Search)
+	g.PATCH("/story", handler.Get)
+	g.POST("/story", handler.Create)
+	g.PUT("/story", handler.Update)
+	g.DELETE("/story", handler.Delete)
+}
+
+func (h *storyHandler) GetAll(ctx echo.Context) error {
+	var req model.StoryRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.StoryResponse
+	err := h.UUcase.GetAll(ctx.Request().Context(), &req, &res)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, res.Stories)
+}
+
+func (h *storyHandler) Search(ctx echo.Context) error {
+	var req model.StoryRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.StoryResponse
+	err := h.UUcase.GetAll(ctx.Request().Context(), &req, &res)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, res.Stories)
+}
+
+func (h *storyHandler) Get(ctx echo.Context) error {
+	id := ctx.QueryParam("id")
+	var res model.StoryResponse
+	if err := h.UUcase.Get(ctx.Request().Context(), id, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, res.Stories)
 }
 
 func (h *storyHandler) Create(ctx echo.Context) error {
@@ -36,5 +81,31 @@ func (h *storyHandler) Create(ctx echo.Context) error {
 	if err := h.UUcase.Create(ctx.Request().Context(), &story, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, res.Story)
+}
+
+func (h *storyHandler) Update(ctx echo.Context) error {
+	var story model.Story
+	if err := ctx.Bind(&story); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.StoryResponse
+	if err := h.UUcase.Update(ctx.Request().Context(), &story, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+	return ctx.JSON(http.StatusOK, res.Story)
+}
+
+func (h *storyHandler) Delete(ctx echo.Context) error {
+	var story model.Story
+	if err := ctx.Bind(&story); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.StoryResponse
+	if err := h.UUcase.Delete(ctx.Request().Context(), &story, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+	return ctx.JSON(http.StatusOK, res.Story)
 }

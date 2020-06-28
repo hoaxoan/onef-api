@@ -17,21 +17,21 @@ func NewUsecase(repo onef_task.Repository) onef_task.Usecase {
 	}
 }
 
-func (ucase *taskUsecase) Get(ctx context.Context, req *model.Task, res *model.TaskResponse) error {
-	task, err := ucase.Repo.Get(req.Id)
-	if err != nil {
-		return err
-	}
-	res.Task = task
-	return nil
-}
-
 func (ucase *taskUsecase) GetAll(ctx context.Context, req *model.TaskRequest, res *model.TaskResponse) error {
 	tasks, err := ucase.Repo.GetAll()
 	if err != nil {
 		return err
 	}
 	res.Tasks = tasks
+	return nil
+}
+
+func (ucase *taskUsecase) Get(ctx context.Context, id string, res *model.TaskResponse) error {
+	task, err := ucase.Repo.Get(id)
+	if err != nil {
+		return err
+	}
+	res.Task = task
 	return nil
 }
 
