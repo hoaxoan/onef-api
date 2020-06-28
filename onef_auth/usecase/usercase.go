@@ -90,7 +90,7 @@ func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.
 	}
 
 	// Compares our given password against the hashed password stored in the database
-	if err := bcrypt.CompareHashAndPassword([]byte(req.Password), []byte(string(user.Password))); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(string(req.Password))); err != nil {
 		return err
 	}
 
