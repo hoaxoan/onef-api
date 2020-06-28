@@ -4,8 +4,8 @@ type ColorRange struct {
 	Id    int    `json:"id,omitempty" bson:"id"`
 	Name  string `json:"name,omitempty" bsn:"name"`
 	Color string `json:"color,omitempty" bson:"color"`
-	Start int    `json:"start,omitempty" bson:"start"`
-	End   int    `json:"end,omitempty" bson:"end"`
+	Start string `json:"start,omitempty" bson:"start"`
+	End   string `json:"end,omitempty" bson:"end"`
 }
 
 type ColorRangeRequest struct {
