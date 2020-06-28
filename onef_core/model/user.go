@@ -40,8 +40,9 @@ type UserResponse struct {
 }
 
 type Token struct {
-	Email  string   `json:"email,omitempty" bson:"email"`
-	Token  string   `json:"token,omitempty" bson:"token"`
-	Valid  bool     `json:"valid,omitempty" bson:"valid"`
-	Errors []*Error `json:"errors,omitempty" bson:"errors"`
+	UserName string   `json:"username,omitempty" bson:"username"`
+	Email    string   `json:"email,omitempty" bson:"email"`
+	Token    string   `json:"token,omitempty" bson:"token"`
+	Valid    bool     `json:"valid,omitempty" bson:"valid"`
+	Errors   []*Error `json:"errors,omitempty" bson:"errors"`
 }

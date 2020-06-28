@@ -82,8 +82,8 @@ func (ucase *userUsecase) Update(ctx context.Context, req *model.User, res *mode
 }
 
 func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.Token) error {
-	log.Println("Logging in with:", req.Email, req.Password)
-	user, err := ucase.Repo.GetByEmail(req.Email)
+	log.Println("Logging in with:", req.UserName, req.Password)
+	user, err := ucase.Repo.GetByUserName(req.UserName)
 	log.Println(user)
 	if err != nil {
 		return err
@@ -98,6 +98,7 @@ func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.
 	if err != nil {
 		return err
 	}
+	res.UserName = user.UserName
 	res.Email = user.Email
 	res.Token = token
 	return nil
@@ -127,7 +128,17 @@ func (ucase *userUsecase) GetToken(ctx context.Context, req *model.User, res *mo
 	if err != nil {
 		return err
 	}
+	res.UserName = req.UserName
 	res.Email = req.Email
 	res.Token = token
+	return nil
+}
+
+func (ucase *userUsecase) GetByUserName(ctx context.Context, userName string, res *model.UserResponse) error {
+	user, err := ucase.Repo.GetByUserName(userName)
+	if err != nil {
+		return err
+	}
+	res.User = user
 	return nil
 }

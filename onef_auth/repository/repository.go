@@ -64,6 +64,16 @@ func (repo *userRepository) GetByEmail(email string) (*model.User, error) {
 	return user, nil
 }
 
+func (repo *userRepository) GetByUserName(userName string) (*model.User, error) {
+	var user *model.User
+	filter := bson.M{"username": userName}
+	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func (repo *userRepository) Create(user *model.User) error {
 	_, err := repo.collection().InsertOne(context.TODO(), user)
 	if err != nil {

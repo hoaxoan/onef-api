@@ -20,12 +20,11 @@ func NewHandler(e *echo.Echo, uc onef_auth.Usecase) {
 	handler := &userHandler{
 		UUcase: uc,
 	}
-	PrivateRoute(e, handler)
 
 	PublicRoute(e, handler)
 }
 
-func PrivateRoute(e *echo.Echo, handler *userHandler) {
+func PublicRoute(e *echo.Echo, handler *userHandler) {
 	JWTConfig := middleware.JWTConfig{
 		SigningKey: []byte(setting.Config.JWTSecret.JWTKey),
 		Claims:     &model.CustomClaims{},
@@ -33,13 +32,11 @@ func PrivateRoute(e *echo.Echo, handler *userHandler) {
 
 	g := e.Group("/api/v1/auth")
 	g.Use(middleware.JWTWithConfig(JWTConfig))
-	g.PUT("/user/update", handler.Update)
-}
 
-func PublicRoute(e *echo.Echo, handler *userHandler) {
-	g := e.Group("/api/v1/auth")
-	g.PATCH("/login", handler.Login)
+	g.POST("/login", handler.Login)
 	g.POST("/register", handler.Register)
+	g.GET("/user", handler.GetAuthenticatedUser)
+	g.PUT("/user", handler.Update)
 }
 
 func (h *userHandler) Login(ctx echo.Context) error {
@@ -75,6 +72,29 @@ func (h *userHandler) Register(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, token)
+}
+
+func (h *userHandler) GetAuthenticatedUser(ctx echo.Context) error {
+	userToken := ctx.Get("user").(*jwt.Token)
+	if userToken == nil || userToken.Valid == false {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+	claims := userToken.Claims.(*model.CustomClaims)
+	if claims == nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+	user := claims.User
+	if user == nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+
+	var res model.UserResponse
+	err := h.UUcase.GetByUserName(ctx.Request().Context(), user.UserName, &res)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	return ctx.JSON(http.StatusOK, res.User)
 }
 
 func (h *userHandler) Update(ctx echo.Context) error {
