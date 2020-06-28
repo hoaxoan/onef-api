@@ -7,7 +7,7 @@ import (
 )
 
 type Story struct {
-	Id          primitive.ObjectID `json:"id,omitempty" bson:"_id"`
+	Id          primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
 	Title       string             `json:"title,omitempty" bsn:"title"`
 	Description string             `json:"description,omitempty" bson:"description"`
 	Note        string             `json:"note,omitempty" bson:"note"`

@@ -21,10 +21,12 @@ func NewHandler(e *echo.Echo, uc onef_auth.Usecase) {
 		UUcase: uc,
 	}
 
+	PrivateRoute(e, handler)
+
 	PublicRoute(e, handler)
 }
 
-func PublicRoute(e *echo.Echo, handler *userHandler) {
+func PrivateRoute(e *echo.Echo, handler *userHandler) {
 	JWTConfig := middleware.JWTConfig{
 		SigningKey: []byte(setting.Config.JWTSecret.JWTKey),
 		Claims:     &model.CustomClaims{},
@@ -33,10 +35,15 @@ func PublicRoute(e *echo.Echo, handler *userHandler) {
 	g := e.Group("/api/v1/auth")
 	g.Use(middleware.JWTWithConfig(JWTConfig))
 
-	g.POST("/login", handler.Login)
-	g.POST("/register", handler.Register)
 	g.GET("/user", handler.GetAuthenticatedUser)
 	g.PUT("/user", handler.Update)
+}
+
+func PublicRoute(e *echo.Echo, handler *userHandler) {
+	g := e.Group("/api/v1/auth")
+
+	g.POST("/login", handler.Login)
+	g.POST("/register", handler.Register)
 }
 
 func (h *userHandler) Login(ctx echo.Context) error {
