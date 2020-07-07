@@ -1,13 +1,11 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 type ColorRange struct {
-	Id    primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
-	Name  string             `json:"name,omitempty" bsn:"name"`
-	Color string             `json:"color,omitempty" bson:"color"`
-	Start string             `json:"start,omitempty" bson:"start"`
-	End   string             `json:"end,omitempty" bson:"end"`
+	Id    int    `json:"id,omitempty" bson:"id"`
+	Name  string `json:"name,omitempty" bsn:"name"`
+	Color string `json:"color,omitempty" bson:"color"`
+	Start string `json:"start,omitempty" bson:"start"`
+	End   string `json:"end,omitempty" bson:"end"`
 }
 
 type ColorRangeRequest struct {

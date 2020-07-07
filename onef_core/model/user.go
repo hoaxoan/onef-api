@@ -2,25 +2,27 @@ package model
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
-	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
-	UserName string             `json:"username,omitempty" bson:"username"`
-	Email    string             `json:"email,omitempty" bson:"email"`
-	Password string             `json:"password,omitempty" bson:"password"`
-	Profile  *UserProfile       `json:"profile,omitempty" bson:"profile"`
+	Id       int          `json:"id,omitempty" bson:"id"`
+	UserName string       `json:"username,omitempty" bson:"username"`
+	Email    string       `json:"email,omitempty" bson:"email"`
+	Password string       `json:"password,omitempty" bson:"password"`
+	Profile  *UserProfile `json:"profile,omitempty" bson:"profile"`
 }
 
 type UserProfile struct {
-	Id       primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
-	Name     string             `json:"name,omitempty" bson:"name"`
-	Avatar   string             `json:"avatar,omitempty" bson:"avatar"`
-	Cover    string             `json:"cover,omitempty" bson:"cover"`
-	Bio      string             `json:"bio,omitempty" bson:"bio"`
-	Url      string             `json:"url,omitempty" bson:"url"`
-	Location string             `json:"location,omitempty" bson:"location"`
+	Id                    int    `json:"id,omitempty" bson:"id"`
+	Name                  string `json:"name,omitempty" bson:"name"`
+	Avatar                string `json:"avatar,omitempty" bson:"avatar"`
+	Cover                 string `json:"cover,omitempty" bson:"cover"`
+	Bio                   string `json:"bio,omitempty" bson:"bio"`
+	Url                   string `json:"url,omitempty" bson:"url"`
+	Location              string `json:"location,omitempty" bson:"location"`
+	IsOfLegalAge          string `json:"is_of_legal_age,omitempty" bson:"is_of_legal_age"`
+	FollowersCountVisible string `json:"followers_count_visible,omitempty" bson:"followers_count_visible"`
+	CommunityPostsVisible string `json:"community_posts_visible,omitempty" bson:"community_posts_visible"`
 }
 
 // CustomClaims is our custom metadata, which will be hashed

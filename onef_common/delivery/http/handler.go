@@ -24,21 +24,21 @@ func NewHandler(e *echo.Echo, uc onef_common.Usecase) {
 func PublicRoute(e *echo.Echo, handler *commonHandler) {
 	g := e.Group("/api/v1/common")
 	// Categories
-	g.PATCH("/categories", handler.GetCategories)
+	g.GET("/categories", handler.GetCategories)
 	g.POST("/categories", handler.CreateCategories)
 	g.POST("/category", handler.CreateCategory)
 	g.PUT("/category", handler.UpdateCategory)
 	g.DELETE("/category", handler.DeleteCategory)
 
 	// Moods
-	g.PATCH("/moods", handler.GetMoods)
+	g.GET("/moods", handler.GetMoods)
 	g.POST("/moods", handler.CreateMoods)
 	g.POST("/mood", handler.CreateMood)
 	g.PUT("/mood", handler.UpdateMood)
 	g.DELETE("/mood", handler.DeleteMood)
 
 	// Color Ranges
-	g.PATCH("/color-ranges", handler.GetColorRanges)
+	g.GET("/color-ranges", handler.GetColorRanges)
 	g.POST("/color-ranges", handler.CreateColorRanges)
 	g.POST("/color-range", handler.CreateColorRange)
 	g.PUT("/color-range", handler.UpdateColorRange)
@@ -56,7 +56,7 @@ func (h *commonHandler) GetCategories(ctx echo.Context) error {
 	if err := h.UUcase.GetCategories(ctx.Request().Context(), &req, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, res.Categories)
 }
 
 func (h *commonHandler) CreateCategories(ctx echo.Context) error {
@@ -126,7 +126,7 @@ func (h *commonHandler) GetMoods(ctx echo.Context) error {
 	if err := h.UUcase.GetMoods(ctx.Request().Context(), &req, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
-	return ctx.JSON(http.StatusOK, res)
+	return ctx.JSON(http.StatusOK, res.Moods)
 }
 
 func (h *commonHandler) CreateMoods(ctx echo.Context) error {

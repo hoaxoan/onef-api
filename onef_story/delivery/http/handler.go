@@ -23,9 +23,9 @@ func NewHandler(e *echo.Echo, uc onef_story.Usecase) {
 
 func PublicRoute(e *echo.Echo, handler *storyHandler) {
 	g := e.Group("/api/v1/story")
-	g.PATCH("/stories", handler.GetAll)
-	g.PATCH("/search", handler.Search)
-	g.PATCH("/story", handler.Get)
+	g.GET("/stories", handler.GetAll)
+	g.GET("/search", handler.Search)
+	g.GET("/story", handler.Get)
 	g.POST("/story", handler.Create)
 	g.PUT("/story", handler.Update)
 	g.DELETE("/story", handler.Delete)

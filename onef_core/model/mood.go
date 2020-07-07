@@ -1,13 +1,11 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 type Mood struct {
-	Id    primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
-	Name  string             `json:"name,omitempty" bsn:"name"`
-	Color string             `json:"color,omitempty" bson:"color"`
-	Code  string             `json:"code,omitempty" bson:"code"`
-	Order int                `json:"order,omitempty" bson:"order"`
+	Id    int    `json:"id,omitempty" bson:"id"`
+	Name  string `json:"name,omitempty" bsn:"name"`
+	Color string `json:"color,omitempty" bson:"color"`
+	Code  string `json:"code,omitempty" bson:"code"`
+	Order int    `json:"order,omitempty" bson:"order"`
 }
 
 type MoodRequest struct {
