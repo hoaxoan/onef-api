@@ -3,23 +3,23 @@ package model
 import "time"
 
 type Hashtag struct {
-	Id        int64     `json:"id,omitempty" bson:"id"`
-	Name      string    `json:"name,omitempty" bson:"name"`
-	Color     string    `json:"color,omitempty" bson:"color"`
-	TextColor string    `json:"text_color,omitempty" bson:"text_color"`
-	Width     int32     `json:"width,omitempty" bson:"width"`
-	Height    int32     `json:"height,omitempty" bson:"height"`
-	Image     string    `json:"image,omitempty" bson:"image"`
-	EmojiId   int64     `json:"emoji_id,omitempty" bson:"emoji_id"`
-	Created   time.Time `json:"created,omitempty" bson:"created"`
-	Emoji     *Emoji    `json:"emoji,omitempty" bson:"emoji"`
+	Model
+	Name      string    `json:"name,omitempty" gorm:"column:name" bson:"name"`
+	Color     string    `json:"color,omitempty" gorm:"column:color" bson:"color"`
+	TextColor string    `json:"text_color,omitempty" gorm:"column:text_color" bson:"text_color"`
+	Width     int32     `json:"width,omitempty" gorm:"column:width" bson:"width"`
+	Height    int32     `json:"height,omitempty" gorm:"column:height" bson:"height"`
+	Image     string    `json:"image,omitempty" gorm:"column:image" bson:"image"`
+	EmojiId   int       `json:"emoji_id,omitempty" gorm:"column:emoji_id" bson:"emoji_id"`
+	Created   time.Time `json:"created,omitempty" gorm:"column:created" bson:"created"`
+	Emoji     *Emoji    `json:"emoji,omitempty" gorm:"foreignkey:EmojiId" bson:"emoji"`
 }
 
 type HashtagRequest struct {
 }
 
 type HashtagResponse struct {
-	Hashtag  *Hashtag   `json:"hashtag,omitempty" bson:"hashtag"`
-	Hashtags []*Hashtag `json:"hashtags,omitempty" bson:"hashtags"`
-	Errors   []*Error   `json:"errors,omitempty" bson:"errors"`
+	Hashtag  *Hashtag  `json:"hashtag,omitempty" bson:"hashtag"`
+	Hashtags []Hashtag `json:"hashtags,omitempty" bson:"hashtags"`
+	Errors   []*Error  `json:"errors,omitempty" bson:"errors"`
 }

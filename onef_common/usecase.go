@@ -1,4 +1,4 @@
-package onef_common
+package onef_categories
 
 import (
 	"context"
@@ -7,21 +7,8 @@ import (
 )
 
 type Usecase interface {
-	GetCategories(ctx context.Context, req *model.CategoryRequest, res *model.CategoryResponse) error
-	CreateCategories(ctx context.Context, req []*model.Category, res *model.CategoryResponse) error
-	CreateCategory(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
-	UpdateCategory(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
-	DeleteCategory(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
-
-	GetMoods(ctx context.Context, req *model.MoodRequest, res *model.MoodResponse) error
-	CreateMoods(ctx context.Context, req []*model.Mood, res *model.MoodResponse) error
-	CreateMood(ctx context.Context, req *model.Mood, res *model.MoodResponse) error
-	UpdateMood(ctx context.Context, req *model.Mood, res *model.MoodResponse) error
-	DeleteMood(ctx context.Context, req *model.Mood, res *model.MoodResponse) error
-
-	GetColorRanges(ctx context.Context, req *model.ColorRangeRequest, res *model.ColorRangeResponse) error
-	CreateColorRanges(ctx context.Context, req []*model.ColorRange, res *model.ColorRangeResponse) error
-	CreateColorRange(ctx context.Context, req *model.ColorRange, res *model.ColorRangeResponse) error
-	UpdateColorRange(ctx context.Context, req *model.ColorRange, res *model.ColorRangeResponse) error
-	DeleteColorRange(ctx context.Context, req *model.ColorRange, res *model.ColorRangeResponse) error
+	Get(ctx context.Context, req *model.CategoryRequest, res *model.CategoryResponse) error
+	Create(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
+	Update(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
+	Delete(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
 }
