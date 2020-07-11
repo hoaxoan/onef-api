@@ -1,28 +1,54 @@
 package model
 
 import (
+	"database/sql"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
 type User struct {
-	Id       int          `json:"id,omitempty" bson:"id"`
-	UserName string       `json:"username,omitempty" bson:"username"`
-	Email    string       `json:"email,omitempty" bson:"email"`
-	Password string       `json:"password,omitempty" bson:"password"`
-	Profile  *UserProfile `json:"profile,omitempty" bson:"profile"`
+	Model
+	UserName              string        `json:"username,omitempty" gorm:"column:username" bson:"username"`
+	Email                 string        `json:"email,omitempty" gorm:"column:email" bson:"email"`
+	Password              string        `json:"password,omitempty" gorm:"column:password" bson:"password"`
+	LastLogin             time.Time     `json:"last_login,omitempty" gorm:"column:last_login" bson:"last_login"`
+	IsSuperuser           bool          `json:"is_superuser,omitempty" gorm:"column:is_superuser" bson:"is_superuser"`
+	IsStaff               bool          `json:"is_staff,omitempty" gorm:"column:is_staff" bson:"is_staff"`
+	IsActive              bool          `json:"is_active,omitempty" gorm:"column:is_active" bson:"is_active"`
+	DateJoined            time.Time     `json:"date_joined,omitempty" gorm:"column:date_joined" bson:"date_joined"`
+	IsEmailVerified       bool          `json:"is_email_verified,omitempty" gorm:"column:is_email_verified" bson:"is_email_verified"`
+	AreGuidelinesAccepted bool          `json:"are_guidelines_accepted,omitempty" gorm:"column:are_guidelines_accepted" bson:"are_guidelines_accepted"`
+	IsDeleted             bool          `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
+	Visibility            string        `json:"visibility,omitempty" gorm:"column:visibility" bson:"visibility"`
+	InviteCount           int           `json:"invite_count,omitempty" gorm:"column:invite_count" bson:"invite_count"`
+	LanguageId            sql.NullInt32 `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
+	TranslationLanguageId sql.NullInt32 `json:"translation_language_id,omitempty" gorm:"column:translation_language_id" bson:"translation_language_id"`
+	Language              *Language     `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
+	TranslationLanguage   *Language     `json:"translation_language,omitempty" gorm:"foreignkey:TranslationLanguageId" bson:"translation_language"`
 }
 
 type UserProfile struct {
-	Id                    int    `json:"id,omitempty" bson:"id"`
-	Name                  string `json:"name,omitempty" bson:"name"`
-	Avatar                string `json:"avatar,omitempty" bson:"avatar"`
-	Cover                 string `json:"cover,omitempty" bson:"cover"`
-	Bio                   string `json:"bio,omitempty" bson:"bio"`
-	Url                   string `json:"url,omitempty" bson:"url"`
-	Location              string `json:"location,omitempty" bson:"location"`
-	IsOfLegalAge          string `json:"is_of_legal_age,omitempty" bson:"is_of_legal_age"`
-	FollowersCountVisible string `json:"followers_count_visible,omitempty" bson:"followers_count_visible"`
-	CommunityPostsVisible string `json:"community_posts_visible,omitempty" bson:"community_posts_visible"`
+	Model
+	UserId                int    `json:"user_id,omitempty" gorm:"column:user_id" bson:"user_id"`
+	Name                  string `json:"name,omitempty" gorm:"column:name" bson:"name"`
+	Avatar                string `json:"avatar,omitempty" gorm:"column:avatar" bson:"avatar"`
+	Cover                 string `json:"cover,omitempty" gorm:"column:cover" bson:"cover"`
+	Bio                   string `json:"bio,omitempty" gorm:"column:bio" bson:"bio"`
+	Url                   string `json:"url,omitempty" gorm:"column:url" bson:"url"`
+	Location              string `json:"location,omitempty" gorm:"column:location" bson:"location"`
+	IsOfLegalAge          bool   `json:"is_of_legal_age,omitempty" gorm:"column:is_of_legal_age" bson:"is_of_legal_age"`
+	FollowersCountVisible bool   `json:"followers_count_visible,omitempty" gorm:"column:followers_count_visible" bson:"followers_count_visible"`
+	CommunityPostsVisible bool   `json:"community_posts_visible,omitempty" gorm:"column:community_posts_visible" bson:"community_posts_visible"`
+	User                  *User  `json:"user,omitempty" gorm:"foreignkey:UserId" bson:"user"`
+}
+
+func (User) TableName() string {
+	return "user"
+}
+
+func (UserProfile) TableName() string {
+	return "userprofile"
 }
 
 // CustomClaims is our custom metadata, which will be hashed
@@ -32,7 +58,25 @@ type CustomClaims struct {
 	jwt.StandardClaims
 }
 
+type RegisterRequest struct {
+	UserName              string `json:"username,omitempty" bson:"username"`
+	Email                 string `json:"email,omitempty" bson:"email"`
+	Password              string `json:"password,omitempty" bson:"password"`
+	Name                  string `json:"name,omitempty" bson:"name"`
+	Avatar                string `json:"avatar,omitempty" bson:"avatar"`
+	IsOfLegalAge          bool   `json:"is_of_legal_age,omitempty" bson:"is_of_legal_age"`
+	AreGuidelinesAccepted bool   `json:"are_guidelines_accepted,omitempty" bson:"are_guidelines_accepted"`
+}
+
+type LoginRequest struct {
+	UserName string `json:"username,omitempty" bson:"username"`
+	Email    string `json:"email,omitempty" bson:"email"`
+	Password string `json:"password,omitempty" bson:"password"`
+}
+
 type UserRequest struct {
+	UserName string `json:"username,omitempty" bson:"username"`
+	Email    string `json:"email,omitempty" bson:"email"`
 }
 
 type UserResponse struct {

@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"log"
 
 	"github.com/hoaxoan/onef-api/onef_auth"
@@ -23,6 +22,62 @@ func NewUsecase(repo onef_auth.Repository, tokenService service.Authable) onef_a
 	}
 }
 
+func (ucase *userUsecase) Register(ctx context.Context, req *model.RegisterRequest, res *model.UserResponse) error {
+	// Generates a hashed version of our password
+	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	req.Password = string(hashedPass)
+
+	user, err := ucase.Repo.CreateUser(req)
+	if err != nil {
+		return err
+	}
+
+	res.User = user
+	return nil
+}
+
+func (ucase *userUsecase) Login(ctx context.Context, req *model.LoginRequest, res *model.Token) error {
+	user, err := ucase.Repo.GetUserWithUserName(req.UserName)
+	if err != nil {
+		return err
+	}
+
+	// Compares our given password against the hashed password stored in the database
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(string(req.Password))); err != nil {
+		return err
+	}
+
+	token, err := ucase.TokenService.Encode(user)
+	if err != nil {
+		return err
+	}
+	res.UserName = user.UserName
+	res.Email = user.Email
+	res.Token = token
+	return nil
+}
+
+func (ucase *userUsecase) GetUserWithUserName(ctx context.Context, userName string, res *model.UserResponse) error {
+	user, err := ucase.Repo.GetUserWithUserName(userName)
+	if err != nil {
+		return err
+	}
+	res.User = user
+	return nil
+}
+
+func (ucase *userUsecase) GetUserWithEmail(ctx context.Context, email string, res *model.UserResponse) error {
+	user, err := ucase.Repo.GetUserWithEmail(email)
+	if err != nil {
+		return err
+	}
+	res.User = user
+	return nil
+}
+
 func (ucase *userUsecase) GetAll(ctx context.Context, req *model.UserRequest, res *model.UserResponse) error {
 	users, err := ucase.Repo.GetAll()
 	if err != nil {
@@ -32,7 +87,7 @@ func (ucase *userUsecase) GetAll(ctx context.Context, req *model.UserRequest, re
 	return nil
 }
 
-func (ucase *userUsecase) Get(ctx context.Context, id string, res *model.UserResponse) error {
+func (ucase *userUsecase) Get(ctx context.Context, id int, res *model.UserResponse) error {
 	user, err := ucase.Repo.Get(id)
 	if err != nil {
 		return err
@@ -41,25 +96,8 @@ func (ucase *userUsecase) Get(ctx context.Context, id string, res *model.UserRes
 	return nil
 }
 
-func (ucase *userUsecase) Create(ctx context.Context, req *model.User, res *model.UserResponse) error {
-	if isToken := ucase.Repo.IsEmailToken(req.Email); isToken == true {
-		return errors.New("An account for the email already exists.")
-	}
-	// Generates a hashed version of our password
-	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	req.Password = string(hashedPass)
-	if err := ucase.Repo.Create(req); err != nil {
-		return err
-	}
-	res.User = req
-	return nil
-}
-
 func (ucase *userUsecase) Update(ctx context.Context, req *model.User, res *model.UserResponse) error {
-	existUser, err := ucase.Repo.GetByEmail(req.Email)
+	existUser, err := ucase.Repo.GetUserWithEmail(req.Email)
 	if err != nil {
 		return err
 	}
@@ -78,29 +116,6 @@ func (ucase *userUsecase) Update(ctx context.Context, req *model.User, res *mode
 		return err
 	}
 	res.User = req
-	return nil
-}
-
-func (ucase *userUsecase) Auth(ctx context.Context, req *model.User, res *model.Token) error {
-	log.Println("Logging in with:", req.UserName, req.Password)
-	user, err := ucase.Repo.GetByUserName(req.UserName)
-	log.Println(user)
-	if err != nil {
-		return err
-	}
-
-	// Compares our given password against the hashed password stored in the database
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(string(req.Password))); err != nil {
-		return err
-	}
-
-	token, err := ucase.TokenService.Encode(user)
-	if err != nil {
-		return err
-	}
-	res.UserName = user.UserName
-	res.Email = user.Email
-	res.Token = token
 	return nil
 }
 
@@ -131,14 +146,5 @@ func (ucase *userUsecase) GetToken(ctx context.Context, req *model.User, res *mo
 	res.UserName = req.UserName
 	res.Email = req.Email
 	res.Token = token
-	return nil
-}
-
-func (ucase *userUsecase) GetByUserName(ctx context.Context, userName string, res *model.UserResponse) error {
-	user, err := ucase.Repo.GetByUserName(userName)
-	if err != nil {
-		return err
-	}
-	res.User = user
 	return nil
 }

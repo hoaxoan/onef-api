@@ -6,10 +6,12 @@ import (
 
 type Repository interface {
 	GetAll() ([]*model.User, error)
-	Get(id string) (*model.User, error)
-	GetByEmail(email string) (*model.User, error)
-	GetByUserName(userName string) (*model.User, error)
-	Create(user *model.User) error
+	Get(id int) (*model.User, error)
+	CreateUser(req *model.RegisterRequest) (*model.User, error)
 	Update(user *model.User) error
+
+	GetUserWithEmail(email string) (*model.User, error)
+	GetUserWithUserName(userName string) (*model.User, error)
+	IsUserNameToken(userName string) bool
 	IsEmailToken(email string) bool
 }

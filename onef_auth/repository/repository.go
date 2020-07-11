@@ -1,100 +1,112 @@
 package repository
 
 import (
-	"context"
+	"errors"
 
 	"github.com/hoaxoan/onef-api/onef_auth"
 	"github.com/hoaxoan/onef-api/onef_core/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"gopkg.in/mgo.v2/bson"
-)
-
-const (
-	DbName  = "onef"
-	ColName = "user"
+	"github.com/jinzhu/gorm"
 )
 
 type userRepository struct {
-	Client *mongo.Client
+	db *gorm.DB
 }
 
-func NewRepository(Client *mongo.Client) onef_auth.Repository {
-	return &userRepository{Client}
+func NewRepository(db *gorm.DB) onef_auth.Repository {
+	return &userRepository{db}
 }
 
-func (repo *userRepository) collection() *mongo.Collection {
-	return repo.Client.Database(DbName).Collection(ColName)
+func (repo *userRepository) CreateUser(req *model.RegisterRequest) (*model.User, error) {
+	// Validator
+	if !req.IsOfLegalAge {
+		return nil, errors.New("You must confirm you are over 16 years old to make an account.")
+	}
+
+	if !req.IsOfLegalAge {
+		return nil, errors.New("You must accept the guidelines to make an account.")
+	}
+
+	if !repo.IsUserNameToken(req.UserName) {
+		return nil, errors.New("The username is already taken.")
+	}
+
+	if !repo.IsEmailToken(req.Email) {
+		return nil, errors.New("The email is already taken.")
+	}
+
+	// Create User
+	user := model.User{UserName: req.UserName, Email: req.Email, Password: req.Password, AreGuidelinesAccepted: req.AreGuidelinesAccepted}
+	err := repo.db.Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Create UserProfile
+	userProfile := model.UserProfile{User: &user, Name: req.Name, Avatar: req.Avatar, IsOfLegalAge: req.IsOfLegalAge, UserId: user.Id}
+	if err := repo.db.Create(&userProfile).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (repo *userRepository) GetAll() ([]*model.User, error) {
 	var users []*model.User
-	cur, err := repo.collection().Find(context.TODO(), bson.M{})
-	if err != nil {
-		return nil, err
-	}
-	err = cur.All(context.TODO(), &users)
+	err := repo.db.Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
-func (repo *userRepository) Get(id string) (*model.User, error) {
-	objId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return nil, err
-	}
-
+func (repo *userRepository) Get(id int) (*model.User, error) {
 	var user *model.User
-	filter := bson.M{"_id": objId}
-	if err := repo.collection().FindOne(context.TODO(), filter).Decode(&user); err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (repo *userRepository) GetByEmail(email string) (*model.User, error) {
-	var user *model.User
-	filter := bson.M{"email": email}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
+	err := repo.db.Where("id = ?", id).Take(&user).Error
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
-}
-
-func (repo *userRepository) GetByUserName(userName string) (*model.User, error) {
-	var user *model.User
-	filter := bson.M{"username": userName}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (repo *userRepository) Create(user *model.User) error {
-	_, err := repo.collection().InsertOne(context.TODO(), user)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (repo *userRepository) Update(user *model.User) error {
-	filter := bson.M{"email": user.Email}
-	_, err := repo.collection().UpdateOne(context.TODO(), filter, bson.M{"$set": user})
+	err := repo.db.Where("id = ?", user.Id).Updates(&user).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+func (repo *userRepository) GetUserWithUserName(userName string) (*model.User, error) {
+	var user model.User
+	if dbc := repo.db.Where("username = ?", userName).First(&user); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return &user, nil
+}
+
+func (repo *userRepository) GetUserWithEmail(email string) (*model.User, error) {
+	var user model.User
+	if dbc := repo.db.Where("email = ?", email).First(&user); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return &user, nil
+}
+
+func (repo *userRepository) IsUserNameToken(userName string) bool {
+	user, err := repo.GetUserWithEmail(userName)
+	if err != nil {
+		return false
+	}
+
+	if user != nil && user.UserName == userName {
+		return true
+	}
+
+	return false
+}
+
 func (repo *userRepository) IsEmailToken(email string) bool {
-	var user *model.User
-	filter := bson.M{"email": email}
-	err := repo.collection().FindOne(context.TODO(), filter).Decode(&user)
+	user, err := repo.GetUserWithEmail(email)
 	if err != nil {
 		return false
 	}

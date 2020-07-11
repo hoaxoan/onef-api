@@ -30,6 +30,13 @@ type ConfigSchema struct {
 		Username string `mapstructure:"Username"`
 		Password string `mapstructure:"Password"`
 	} `mapstructure:"MongoDB"`
+	Mysql struct {
+		Host     string `mapstructure:"Host"`
+		Port     string `mapstructure:"Port"`
+		DbName   string `mapstructure:"DbName"`
+		Username string `mapstructure:"Username"`
+		Password string `mapstructure:"Password"`
+	} `mapstructure:"Mysql"`
 	JWTSecret struct {
 		JWTKey string `mapstructure:"JWTEncodeKey"`
 	} `mapstructure:"JWTSeret"`

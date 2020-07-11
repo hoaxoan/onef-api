@@ -37,6 +37,9 @@ func PrivateRoute(e *echo.Echo, handler *userHandler) {
 
 	g.GET("/user", handler.GetAuthenticatedUser)
 	g.PUT("/user", handler.Update)
+	g.POST("/username-check", handler.UsernameCheck)
+	g.POST("/email-check", handler.EmailCheck)
+	g.POST("/password/reset", handler.PasswordResetRequest)
 }
 
 func PublicRoute(e *echo.Echo, handler *userHandler) {
@@ -47,13 +50,13 @@ func PublicRoute(e *echo.Echo, handler *userHandler) {
 }
 
 func (h *userHandler) Login(ctx echo.Context) error {
-	var user model.User
-	if err := ctx.Bind(&user); err != nil {
+	var req model.LoginRequest
+	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	var token model.Token
-	err := h.UUcase.Auth(ctx.Request().Context(), &user, &token)
+	err := h.UUcase.Login(ctx.Request().Context(), &req, &token)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
@@ -62,18 +65,18 @@ func (h *userHandler) Login(ctx echo.Context) error {
 }
 
 func (h *userHandler) Register(ctx echo.Context) error {
-	var user model.User
-	if err := ctx.Bind(&user); err != nil {
+	var req model.RegisterRequest
+	if err := ctx.Bind(&req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	var res model.UserResponse
-	if err := h.UUcase.Create(ctx.Request().Context(), &user, &res); err != nil {
+	if err := h.UUcase.Register(ctx.Request().Context(), &req, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	var token model.Token
-	err := h.UUcase.GetToken(ctx.Request().Context(), &user, &token)
+	err := h.UUcase.GetToken(ctx.Request().Context(), res.User, &token)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
@@ -96,12 +99,54 @@ func (h *userHandler) GetAuthenticatedUser(ctx echo.Context) error {
 	}
 
 	var res model.UserResponse
-	err := h.UUcase.GetByUserName(ctx.Request().Context(), user.UserName, &res)
+	err := h.UUcase.GetUserWithUserName(ctx.Request().Context(), user.UserName, &res)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	return ctx.JSON(http.StatusOK, res.User)
+}
+
+func (h *userHandler) UsernameCheck(ctx echo.Context) error {
+	var req model.UserRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	var res model.UserResponse
+	if err := h.UUcase.GetUserWithUserName(ctx.Request().Context(), req.UserName, &res); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	return ctx.JSON(http.StatusOK, true)
+}
+
+func (h *userHandler) EmailCheck(ctx echo.Context) error {
+	var req model.UserRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	var res model.UserResponse
+	if err := h.UUcase.GetUserWithEmail(ctx.Request().Context(), req.Email, &res); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	return ctx.JSON(http.StatusOK, true)
+}
+
+func (h *userHandler) PasswordResetRequest(ctx echo.Context) error {
+	var req model.UserRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	var res model.UserResponse
+	if err := h.UUcase.GetUserWithEmail(ctx.Request().Context(), req.Email, &res); err != nil {
+		return ctx.JSON(http.StatusOK, false)
+	}
+
+	return ctx.JSON(http.StatusOK, true)
 }
 
 func (h *userHandler) Update(ctx echo.Context) error {

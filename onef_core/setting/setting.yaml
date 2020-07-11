@@ -6,5 +6,12 @@ MongoDB:
   Username: "mongoadmin"
   Password: "secret1234"
 
+Mysql:
+    Host: "localhost"
+    Port: "3306"
+    DbName: "hummingbird"
+    Username: "root"
+    Password: "root"
+
 JWTSeret:
   JWTEncodeKey: mysecret1234

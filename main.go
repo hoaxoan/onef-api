@@ -5,9 +5,6 @@ import (
 
 	"github.com/hoaxoan/onef-api/onef_core/repository"
 	"github.com/hoaxoan/onef-api/onef_handler/auth"
-	"github.com/hoaxoan/onef-api/onef_handler/common"
-	"github.com/hoaxoan/onef-api/onef_handler/story"
-	"github.com/hoaxoan/onef-api/onef_handler/task"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -23,9 +20,9 @@ func main() {
 	}
 
 	auth.NewHandler(e, client)
-	common.NewHandler(e, client)
-	task.NewHandler(e, client)
-	story.NewHandler(e, client)
+	//common.NewHandler(e, client)
+	//task.NewHandler(e, client)
+	//story.NewHandler(e, client)
 
 	log.Println(e.Start(":9090"))
 }
