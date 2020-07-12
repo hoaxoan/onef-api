@@ -14,13 +14,20 @@ func NewRepository(db *gorm.DB) onef_hashtags.Repository {
 	return &repository{db}
 }
 
-// Categories
 func (repo *repository) Get(req *model.HashtagRequest) ([]model.Hashtag, error) {
 	var hashtags []model.Hashtag
 	if dbc := repo.db.Find(&hashtags); dbc.Error != nil {
 		return nil, dbc.Error
 	}
 	return hashtags, nil
+}
+
+func (repo *repository) GetWithId(id int64) (*model.Hashtag, error) {
+	var hashtag model.Hashtag
+	if dbc := repo.db.Where("id = ?", id).First(&hashtag); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return &hashtag, nil
 }
 
 func (repo *repository) Create(hashtag *model.Hashtag) error {

@@ -8,6 +8,7 @@ import (
 
 type Usecase interface {
 	Get(ctx context.Context, req *model.HashtagRequest, res *model.HashtagResponse) error
+	GetWithId(ctx context.Context, id int64, res *model.HashtagResponse) error
 	Create(ctx context.Context, req *model.Hashtag, res *model.HashtagResponse) error
 	Update(ctx context.Context, req *model.Hashtag, res *model.HashtagResponse) error
 	Delete(ctx context.Context, req *model.Hashtag, res *model.HashtagResponse) error

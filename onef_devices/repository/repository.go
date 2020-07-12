@@ -14,7 +14,6 @@ func NewRepository(db *gorm.DB) onef_devices.Repository {
 	return &repository{db}
 }
 
-// Devices
 func (repo *repository) Get(req *model.DeviceRequest) ([]model.Device, error) {
 	var devices []model.Device
 	if dbc := repo.db.Find(&devices); dbc.Error != nil {
@@ -44,4 +43,12 @@ func (repo *repository) Delete(device *model.Device) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *repository) GetDeviceWithUuid(deviceUuid string) (*model.Device, error) {
+	var device *model.Device
+	if dbc := repo.db.Where("uuid = ?", deviceUuid).First(&device); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return device, nil
 }

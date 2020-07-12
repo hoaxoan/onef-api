@@ -26,6 +26,15 @@ func (ucase *usecase) Get(ctx context.Context, req *model.HashtagRequest, res *m
 	return nil
 }
 
+func (ucase *usecase) GetWithId(ctx context.Context, id int64, res *model.HashtagResponse) error {
+	hashtag, err := ucase.Repo.GetWithId(id)
+	if err != nil {
+		return err
+	}
+	res.Hashtag = hashtag
+	return nil
+}
+
 func (ucase *usecase) Create(ctx context.Context, req *model.Hashtag, res *model.HashtagResponse) error {
 	if err := ucase.Repo.Create(req); err != nil {
 		return err

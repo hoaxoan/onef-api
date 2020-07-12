@@ -40,6 +40,8 @@ func PrivateRoute(e *echo.Echo, handler *userHandler) {
 	g.POST("/username-check", handler.UsernameCheck)
 	g.POST("/email-check", handler.EmailCheck)
 	g.POST("/password/reset", handler.PasswordResetRequest)
+
+	g.GET("/users/:username", handler.GetUserWithUserName)
 }
 
 func PublicRoute(e *echo.Echo, handler *userHandler) {
@@ -173,6 +175,18 @@ func (h *userHandler) Update(ctx echo.Context) error {
 	err := h.UUcase.Update(ctx.Request().Context(), &user, &res)
 	if err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "bad request"})
+	}
+
+	return ctx.JSON(http.StatusOK, res.User)
+}
+
+func (h *userHandler) GetUserWithUserName(ctx echo.Context) error {
+	userName := ctx.Param("username")
+
+	var res model.UserResponse
+	err := h.UUcase.GetUserWithUserName(ctx.Request().Context(), userName, &res)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
 	return ctx.JSON(http.StatusOK, res.User)

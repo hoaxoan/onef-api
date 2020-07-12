@@ -87,8 +87,8 @@ func (ucase *userUsecase) GetAll(ctx context.Context, req *model.UserRequest, re
 	return nil
 }
 
-func (ucase *userUsecase) Get(ctx context.Context, id int, res *model.UserResponse) error {
-	user, err := ucase.Repo.Get(id)
+func (ucase *userUsecase) GetWithId(ctx context.Context, id int64, res *model.UserResponse) error {
+	user, err := ucase.Repo.GetWithId(id)
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (ucase *userUsecase) Get(ctx context.Context, id int, res *model.UserRespon
 }
 
 func (ucase *userUsecase) Update(ctx context.Context, req *model.User, res *model.UserResponse) error {
-	existUser, err := ucase.Repo.GetUserWithEmail(req.Email)
+	existUser, err := ucase.Repo.GetWithId(req.Id)
 	if err != nil {
 		return err
 	}

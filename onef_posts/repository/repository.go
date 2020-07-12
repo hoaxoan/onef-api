@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"github.com/hoaxoan/onef-api/onef_categories"
 	"github.com/hoaxoan/onef-api/onef_core/model"
+	"github.com/hoaxoan/onef-api/onef_posts"
 	"github.com/jinzhu/gorm"
 )
 
@@ -10,35 +10,43 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) onef_categories.Repository {
+func NewRepository(db *gorm.DB) onef_posts.Repository {
 	return &repository{db}
 }
 
-func (repo *repository) Get(req *model.CategoryRequest) ([]model.Category, error) {
-	var categories []model.Category
-	if dbc := repo.db.Order("order asc").Find(&categories); dbc.Error != nil {
+func (repo *repository) Get(req *model.PostRequest) ([]model.Post, error) {
+	var posts []model.Post
+	if dbc := repo.db.Find(&posts); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return categories, nil
+	return posts, nil
 }
 
-func (repo *repository) Create(category *model.Category) error {
-	if dbc := repo.db.Create(&category); dbc.Error != nil {
+func (repo *repository) GetWithId(id int64) (*model.Post, error) {
+	var post model.Post
+	if dbc := repo.db.Where("id = ?", id).First(&post); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return &post, nil
+}
+
+func (repo *repository) Create(post *model.Post) error {
+	if dbc := repo.db.Create(&post); dbc.Error != nil {
 		return dbc.Error
 	}
 	return nil
 }
 
-func (repo *repository) Update(category *model.Category) error {
-	err := repo.db.Where("id = ?", category.Id).Updates(&category).Error
+func (repo *repository) Update(post *model.Post) error {
+	err := repo.db.Where("id = ?", post.Id).Updates(&post).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *repository) Delete(category *model.Category) error {
-	err := repo.db.Where("id = ?", category.Id).Delete(&category).Error
+func (repo *repository) Delete(post *model.Post) error {
+	err := repo.db.Where("id = ?", post.Id).Delete(&post).Error
 	if err != nil {
 		return err
 	}

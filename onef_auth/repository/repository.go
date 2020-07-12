@@ -26,11 +26,11 @@ func (repo *userRepository) CreateUser(req *model.RegisterRequest) (*model.User,
 		return nil, errors.New("You must accept the guidelines to make an account.")
 	}
 
-	if !repo.IsUserNameToken(req.UserName) {
+	if repo.IsUserNameToken(req.UserName) {
 		return nil, errors.New("The username is already taken.")
 	}
 
-	if !repo.IsEmailToken(req.Email) {
+	if repo.IsEmailToken(req.Email) {
 		return nil, errors.New("The email is already taken.")
 	}
 
@@ -52,26 +52,23 @@ func (repo *userRepository) CreateUser(req *model.RegisterRequest) (*model.User,
 
 func (repo *userRepository) GetAll() ([]*model.User, error) {
 	var users []*model.User
-	err := repo.db.Find(&users).Error
-	if err != nil {
-		return nil, err
+	if dbc := repo.db.Find(&users); dbc.Error != nil {
+		return nil, dbc.Error
 	}
 	return users, nil
 }
 
-func (repo *userRepository) Get(id int) (*model.User, error) {
+func (repo *userRepository) GetWithId(id int64) (*model.User, error) {
 	var user *model.User
-	err := repo.db.Where("id = ?", id).Take(&user).Error
-	if err != nil {
-		return nil, err
+	if dbc := repo.db.Where("id = ?", id).Take(&user); dbc.Error != nil {
+		return nil, dbc.Error
 	}
 	return user, nil
 }
 
 func (repo *userRepository) Update(user *model.User) error {
-	err := repo.db.Where("id = ?", user.Id).Updates(&user).Error
-	if err != nil {
-		return err
+	if dbc := repo.db.Where("id = ?", user.Id).Updates(&user); dbc.Error != nil {
+		return dbc.Error
 	}
 	return nil
 }
@@ -81,24 +78,37 @@ func (repo *userRepository) GetUserWithUserName(userName string) (*model.User, e
 	if dbc := repo.db.Where("username = ?", userName).First(&user); dbc.Error != nil {
 		return nil, dbc.Error
 	}
+
+	var profile model.UserProfile
+	if dbc := repo.db.Where("user_id = ?", user.Id).First(&profile); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+
+	user.Profile = &profile
+
 	return &user, nil
 }
 
 func (repo *userRepository) GetUserWithEmail(email string) (*model.User, error) {
 	var user model.User
-	if dbc := repo.db.Where("email = ?", email).First(&user); dbc.Error != nil {
+	if dbc := repo.db.Where("email = ?", email).First(&user).Related(&user.Profile); dbc.Error != nil {
 		return nil, dbc.Error
 	}
+
+	// if dbc := repo.db.Where("user_id = ?", user.Id).First(&user.Profile); dbc.Error != nil {
+	// 	return nil, dbc.Error
+	// }
+
 	return &user, nil
 }
 
 func (repo *userRepository) IsUserNameToken(userName string) bool {
-	user, err := repo.GetUserWithEmail(userName)
-	if err != nil {
+	var user model.User
+	if dbc := repo.db.Where("username = ?", userName).First(&user); dbc.Error != nil {
 		return false
 	}
 
-	if user != nil && user.UserName == userName {
+	if user.UserName == userName {
 		return true
 	}
 
@@ -106,12 +116,12 @@ func (repo *userRepository) IsUserNameToken(userName string) bool {
 }
 
 func (repo *userRepository) IsEmailToken(email string) bool {
-	user, err := repo.GetUserWithEmail(email)
-	if err != nil {
+	var user model.User
+	if dbc := repo.db.Where("email = ?", email).First(&user); dbc.Error != nil {
 		return false
 	}
 
-	if user != nil && user.Email == email {
+	if user.Email == email {
 		return true
 	}
 

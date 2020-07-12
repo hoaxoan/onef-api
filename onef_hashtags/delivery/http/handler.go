@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_hashtags"
@@ -23,11 +24,25 @@ func NewHandler(e *echo.Echo, uc onef_hashtags.Usecase) {
 
 func PublicRoute(e *echo.Echo, handler *handler) {
 	g := e.Group("/api/v1/hashtags")
-	// Categories
+	g.GET("/search", handler.Search)
+	g.GET("/:id", handler.GetWithId)
 	g.GET("", handler.Get)
 	g.POST("", handler.Create)
 	g.PUT("", handler.Update)
 	g.DELETE("", handler.Delete)
+}
+
+func (h *handler) Search(ctx echo.Context) error {
+	var req model.HashtagRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.HashtagResponse
+	if err := h.UUcase.Get(ctx.Request().Context(), &req, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+	return ctx.JSON(http.StatusOK, res.Hashtags)
 }
 
 func (h *handler) Get(ctx echo.Context) error {
@@ -41,6 +56,19 @@ func (h *handler) Get(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 	return ctx.JSON(http.StatusOK, res.Hashtags)
+}
+
+func (h *handler) GetWithId(ctx echo.Context) error {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+
+	var res model.HashtagResponse
+	if err := h.UUcase.GetWithId(ctx.Request().Context(), int64(id), &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+	return ctx.JSON(http.StatusOK, res.Hashtag)
 }
 
 func (h *handler) Create(ctx echo.Context) error {

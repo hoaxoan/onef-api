@@ -16,6 +16,7 @@ type Hashtag struct {
 }
 
 type HashtagRequest struct {
+	Name string `json:"name,omitempty" bson:"name"`
 }
 
 type HashtagResponse struct {

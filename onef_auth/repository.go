@@ -6,7 +6,7 @@ import (
 
 type Repository interface {
 	GetAll() ([]*model.User, error)
-	Get(id int) (*model.User, error)
+	GetWithId(id int64) (*model.User, error)
 	CreateUser(req *model.RegisterRequest) (*model.User, error)
 	Update(user *model.User) error
 

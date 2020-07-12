@@ -9,4 +9,6 @@ type Repository interface {
 	Create(category *model.Device) error
 	Update(category *model.Device) error
 	Delete(category *model.Device) error
+
+	GetDeviceWithUuid(deviceUuid string) (*model.Device, error)
 }

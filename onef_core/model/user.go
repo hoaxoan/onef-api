@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -9,28 +8,29 @@ import (
 
 type User struct {
 	Model
-	UserName              string        `json:"username,omitempty" gorm:"column:username" bson:"username"`
-	Email                 string        `json:"email,omitempty" gorm:"column:email" bson:"email"`
-	Password              string        `json:"password,omitempty" gorm:"column:password" bson:"password"`
-	LastLogin             time.Time     `json:"last_login,omitempty" gorm:"column:last_login" bson:"last_login"`
-	IsSuperuser           bool          `json:"is_superuser,omitempty" gorm:"column:is_superuser" bson:"is_superuser"`
-	IsStaff               bool          `json:"is_staff,omitempty" gorm:"column:is_staff" bson:"is_staff"`
-	IsActive              bool          `json:"is_active,omitempty" gorm:"column:is_active" bson:"is_active"`
-	DateJoined            time.Time     `json:"date_joined,omitempty" gorm:"column:date_joined" bson:"date_joined"`
-	IsEmailVerified       bool          `json:"is_email_verified,omitempty" gorm:"column:is_email_verified" bson:"is_email_verified"`
-	AreGuidelinesAccepted bool          `json:"are_guidelines_accepted,omitempty" gorm:"column:are_guidelines_accepted" bson:"are_guidelines_accepted"`
-	IsDeleted             bool          `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
-	Visibility            string        `json:"visibility,omitempty" gorm:"column:visibility" bson:"visibility"`
-	InviteCount           int           `json:"invite_count,omitempty" gorm:"column:invite_count" bson:"invite_count"`
-	LanguageId            sql.NullInt32 `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
-	TranslationLanguageId sql.NullInt32 `json:"translation_language_id,omitempty" gorm:"column:translation_language_id" bson:"translation_language_id"`
-	Language              *Language     `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
-	TranslationLanguage   *Language     `json:"translation_language,omitempty" gorm:"foreignkey:TranslationLanguageId" bson:"translation_language"`
+	UserName              string       `json:"username,omitempty" gorm:"column:username" bson:"username"`
+	Email                 string       `json:"email,omitempty" gorm:"column:email" bson:"email"`
+	Password              string       `json:"password,omitempty" gorm:"column:password" bson:"password"`
+	LastLogin             time.Time    `json:"last_login,omitempty" gorm:"column:last_login" bson:"last_login"`
+	IsSuperuser           bool         `json:"is_superuser,omitempty" gorm:"column:is_superuser" bson:"is_superuser"`
+	IsStaff               bool         `json:"is_staff,omitempty" gorm:"column:is_staff" bson:"is_staff"`
+	IsActive              bool         `json:"is_active,omitempty" gorm:"column:is_active" bson:"is_active"`
+	DateJoined            time.Time    `json:"date_joined,omitempty" gorm:"column:date_joined" bson:"date_joined"`
+	IsEmailVerified       bool         `json:"is_email_verified,omitempty" gorm:"column:is_email_verified" bson:"is_email_verified"`
+	AreGuidelinesAccepted bool         `json:"are_guidelines_accepted,omitempty" gorm:"column:are_guidelines_accepted" bson:"are_guidelines_accepted"`
+	IsDeleted             bool         `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
+	Visibility            string       `json:"visibility,omitempty" gorm:"column:visibility" bson:"visibility"`
+	InviteCount           int          `json:"invite_count,omitempty" gorm:"column:invite_count" bson:"invite_count"`
+	LanguageId            *int64       `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
+	TranslationLanguageId *int64       `json:"translation_language_id,omitempty" gorm:"column:translation_language_id" bson:"translation_language_id"`
+	Language              *Language    `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
+	TranslationLanguage   *Language    `json:"translation_language,omitempty" gorm:"foreignkey:TranslationLanguageId" bson:"translation_language"`
+	Profile               *UserProfile `json:"profile,omitempty"`
 }
 
 type UserProfile struct {
 	Model
-	UserId                int    `json:"user_id,omitempty" gorm:"column:user_id" bson:"user_id"`
+	UserId                int64  `json:"user_id,omitempty" gorm:"column:user_id" bson:"user_id"`
 	Name                  string `json:"name,omitempty" gorm:"column:name" bson:"name"`
 	Avatar                string `json:"avatar,omitempty" gorm:"column:avatar" bson:"avatar"`
 	Cover                 string `json:"cover,omitempty" gorm:"column:cover" bson:"cover"`
@@ -91,4 +91,9 @@ type Token struct {
 	Token    string   `json:"token,omitempty" bson:"token"`
 	Valid    bool     `json:"valid,omitempty" bson:"valid"`
 	Errors   []*Error `json:"errors,omitempty" bson:"errors"`
+}
+
+type AuthenticatedUser struct {
+	User
+	Profile *UserProfile `json:"profile,omitempty"`
 }

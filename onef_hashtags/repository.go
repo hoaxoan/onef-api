@@ -6,6 +6,7 @@ import (
 
 type Repository interface {
 	Get(req *model.HashtagRequest) ([]model.Hashtag, error)
+	GetWithId(id int64) (*model.Hashtag, error)
 	Create(category *model.Hashtag) error
 	Update(category *model.Hashtag) error
 	Delete(category *model.Hashtag) error

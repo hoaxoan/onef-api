@@ -17,7 +17,6 @@ func NewUsecase(repo onef_devices.Repository) onef_devices.Usecase {
 	}
 }
 
-// Categories
 func (ucase *usecase) Get(ctx context.Context, req *model.DeviceRequest, res *model.DeviceResponse) error {
 	devices, err := ucase.Repo.Get(req)
 	if err != nil {
@@ -48,5 +47,14 @@ func (ucase *usecase) Delete(ctx context.Context, req *model.Device, res *model.
 		return err
 	}
 	res.Device = req
+	return nil
+}
+
+func (ucase *usecase) GetDeviceWithUuid(ctx context.Context, deviceUuid string, res *model.DeviceResponse) error {
+	device, err := ucase.Repo.GetDeviceWithUuid(deviceUuid)
+	if err != nil {
+		return err
+	}
+	res.Device = device
 	return nil
 }

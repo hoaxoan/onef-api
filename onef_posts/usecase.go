@@ -1,4 +1,4 @@
-package onef_categories
+package onef_posts
 
 import (
 	"context"
@@ -7,8 +7,9 @@ import (
 )
 
 type Usecase interface {
-	Get(ctx context.Context, req *model.CategoryRequest, res *model.CategoryResponse) error
-	Create(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
-	Update(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
-	Delete(ctx context.Context, req *model.Category, res *model.CategoryResponse) error
+	Get(ctx context.Context, req *model.PostRequest, res *model.PostResponse) error
+	GetWithId(ctx context.Context, id int64, res *model.PostResponse) error
+	Create(ctx context.Context, req *model.Post, res *model.PostResponse) error
+	Update(ctx context.Context, req *model.Post, res *model.PostResponse) error
+	Delete(ctx context.Context, req *model.Post, res *model.PostResponse) error
 }
