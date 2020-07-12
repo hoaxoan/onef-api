@@ -8,9 +8,9 @@ type Post struct {
 	Text            string     `json:"text,omitempty" gorm:"column:text" bson:"text"`
 	CommentsEnabled bool       `json:"comments_enabled,omitempty" gorm:"column:comments_enabled" bson:"comments_enabled"`
 	PublicReactions bool       `json:"public_reactions,omitempty" gorm:"column:public_reactions" bson:"public_reactions"`
-	CreatorId       int64      `json:"creator_id,omitempty" gorm:"column:creator_id" bson:"creator_id"`
-	CommunityId     int64      `json:"community_id,omitempty" gorm:"column:community_id" bson:"community_id"`
-	LanguageId      int64      `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
+	CreatorId       *int64     `json:"creator_id,omitempty" gorm:"column:creator_id" bson:"creator_id"`
+	CommunityId     *int64     `json:"community_id,omitempty" gorm:"column:community_id" bson:"community_id"`
+	LanguageId      *int64     `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
 	IsEdited        bool       `json:"is_edited,omitempty" gorm:"column:is_edited" bson:"is_edited"`
 	IsClosed        bool       `json:"is_closed,omitempty" gorm:"column:is_closed" bson:"is_closed"`
 	IsDeleted       bool       `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
@@ -29,7 +29,24 @@ func (Post) TableName() string {
 	return "post"
 }
 
+type CreatePostRequest struct {
+	Text          string `json:"text,omitempty"`
+	CommunityName string `json:"community_name,omitempty"`
+	CircleId      string `json:"circle_id,omitempty"`
+	IsDraft       bool   `json:"is_draft,omitempty"`
+	Creator       *User  `json:"creator,omitempty"`
+}
+
+type EditPostRequest struct {
+	Text string `json:"text,omitempty"`
+}
+
 type PostRequest struct {
+	ListId   string `json:"list_id,omitempty"`
+	CircleId string `json:"circle_id,omitempty"`
+	Count    int64  `json:"count,omitempty"`
+	MaxId    int64  `json:"max_id,omitempty"`
+	UserName string `json:"username,omitempty"`
 }
 
 type PostResponse struct {

@@ -7,7 +7,7 @@ type Device struct {
 	UUId    string    `json:"uuid,omitempty" gorm:"column:uuid" bson:"uuid"`
 	Name    string    `json:"name,omitempty" gorm:"column:name" bson:"name"`
 	Created time.Time `json:"created,omitempty" gorm:"column:created" bson:"created"`
-	OwnerId int       `json:"owner_id,omitempty" gorm:"column:owner_id" bson:"owner_id"`
+	OwnerId *int64    `json:"owner_id,omitempty" gorm:"column:owner_id" bson:"owner_id"`
 	Owner   *User     `json:"owner,omitempty" gorm:"foreignkey:OwnerId" bson:"owner"`
 }
 
