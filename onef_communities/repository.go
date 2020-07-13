@@ -5,10 +5,8 @@ import (
 )
 
 type Repository interface {
-	Get(req *model.DeviceRequest) ([]model.Device, error)
-	Create(category *model.Device) error
-	Update(category *model.Device) error
-	Delete(category *model.Device) error
-
-	GetDeviceWithUuid(deviceUuid string) (*model.Device, error)
+	Get(req *model.CommunityRequest) ([]model.Community, error)
+	Create(category *model.Community) error
+	Update(category *model.Community) error
+	Delete(category *model.Community) error
 }

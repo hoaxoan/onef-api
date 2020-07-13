@@ -5,6 +5,13 @@ import (
 
 	"github.com/hoaxoan/onef-api/onef_core/repository"
 	"github.com/hoaxoan/onef-api/onef_handler/auth"
+	"github.com/hoaxoan/onef-api/onef_handler/categories"
+	"github.com/hoaxoan/onef-api/onef_handler/circles"
+	"github.com/hoaxoan/onef-api/onef_handler/communities"
+	"github.com/hoaxoan/onef-api/onef_handler/connections"
+	"github.com/hoaxoan/onef-api/onef_handler/devices"
+	"github.com/hoaxoan/onef-api/onef_handler/hashtags"
+	"github.com/hoaxoan/onef-api/onef_handler/posts"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,8 +27,13 @@ func main() {
 	}
 
 	auth.NewHandler(e, client)
-	//common.NewHandler(e, client)
-	//task.NewHandler(e, client)
+	categories.NewHandler(e, client)
+	circles.NewHandler(e, client)
+	communities.NewHandler(e, client)
+	connections.NewHandler(e, client)
+	devices.NewHandler(e, client)
+	hashtags.NewHandler(e, client)
+	posts.NewHandler(e, client)
 	//story.NewHandler(e, client)
 
 	log.Println(e.Start(":9090"))

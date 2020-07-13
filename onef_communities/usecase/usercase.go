@@ -17,44 +17,35 @@ func NewUsecase(repo onef_communities.Repository) onef_communities.Usecase {
 	}
 }
 
-func (ucase *usecase) Get(ctx context.Context, req *model.DeviceRequest, res *model.DeviceResponse) error {
-	devices, err := ucase.Repo.Get(req)
+func (ucase *usecase) Get(ctx context.Context, req *model.CommunityRequest, res *model.CommunityResponse) error {
+	communities, err := ucase.Repo.Get(req)
 	if err != nil {
 		return err
 	}
-	res.Devices = devices
+	res.Communities = communities
 	return nil
 }
 
-func (ucase *usecase) Create(ctx context.Context, req *model.Device, res *model.DeviceResponse) error {
+func (ucase *usecase) Create(ctx context.Context, req *model.Community, res *model.CommunityResponse) error {
 	if err := ucase.Repo.Create(req); err != nil {
 		return err
 	}
-	res.Device = req
+	res.Community = req
 	return nil
 }
 
-func (ucase *usecase) Update(ctx context.Context, req *model.Device, res *model.DeviceResponse) error {
+func (ucase *usecase) Update(ctx context.Context, req *model.Community, res *model.CommunityResponse) error {
 	if err := ucase.Repo.Update(req); err != nil {
 		return err
 	}
-	res.Device = req
+	res.Community = req
 	return nil
 }
 
-func (ucase *usecase) Delete(ctx context.Context, req *model.Device, res *model.DeviceResponse) error {
+func (ucase *usecase) Delete(ctx context.Context, req *model.Community, res *model.CommunityResponse) error {
 	if err := ucase.Repo.Delete(req); err != nil {
 		return err
 	}
-	res.Device = req
-	return nil
-}
-
-func (ucase *usecase) GetDeviceWithUuid(ctx context.Context, deviceUuid string, res *model.DeviceResponse) error {
-	device, err := ucase.Repo.GetDeviceWithUuid(deviceUuid)
-	if err != nil {
-		return err
-	}
-	res.Device = device
+	res.Community = req
 	return nil
 }

@@ -7,10 +7,8 @@ import (
 )
 
 type Usecase interface {
-	Get(ctx context.Context, req *model.DeviceRequest, res *model.DeviceResponse) error
-	Create(ctx context.Context, req *model.Device, res *model.DeviceResponse) error
-	Update(ctx context.Context, req *model.Device, res *model.DeviceResponse) error
-	Delete(ctx context.Context, req *model.Device, res *model.DeviceResponse) error
-
-	GetDeviceWithUuid(ctx context.Context, deviceUuid string, res *model.DeviceResponse) error
+	Get(ctx context.Context, req *model.CommunityRequest, res *model.CommunityResponse) error
+	Create(ctx context.Context, req *model.Community, res *model.CommunityResponse) error
+	Update(ctx context.Context, req *model.Community, res *model.CommunityResponse) error
+	Delete(ctx context.Context, req *model.Community, res *model.CommunityResponse) error
 }

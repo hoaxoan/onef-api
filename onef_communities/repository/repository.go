@@ -14,41 +14,33 @@ func NewRepository(db *gorm.DB) onef_communities.Repository {
 	return &repository{db}
 }
 
-func (repo *repository) Get(req *model.DeviceRequest) ([]model.Device, error) {
-	var devices []model.Device
-	if dbc := repo.db.Find(&devices); dbc.Error != nil {
+func (repo *repository) Get(req *model.CommunityRequest) ([]model.Community, error) {
+	var communities []model.Community
+	if dbc := repo.db.Find(&communities); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return devices, nil
+	return communities, nil
 }
 
-func (repo *repository) Create(device *model.Device) error {
-	if dbc := repo.db.Create(&device); dbc.Error != nil {
+func (repo *repository) Create(community *model.Community) error {
+	if dbc := repo.db.Create(&community); dbc.Error != nil {
 		return dbc.Error
 	}
 	return nil
 }
 
-func (repo *repository) Update(device *model.Device) error {
-	err := repo.db.Where("id = ?", device.Id).Updates(&device).Error
+func (repo *repository) Update(community *model.Community) error {
+	err := repo.db.Where("id = ?", community.Id).Updates(&community).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (repo *repository) Delete(device *model.Device) error {
-	err := repo.db.Where("id = ?", device.Id).Delete(&device).Error
+func (repo *repository) Delete(community *model.Community) error {
+	err := repo.db.Where("id = ?", community.Id).Delete(&community).Error
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func (repo *repository) GetDeviceWithUuid(deviceUuid string) (*model.Device, error) {
-	var device *model.Device
-	if dbc := repo.db.Where("uuid = ?", deviceUuid).First(&device); dbc.Error != nil {
-		return nil, dbc.Error
-	}
-	return device, nil
 }

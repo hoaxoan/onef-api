@@ -11,7 +11,7 @@ type postsUsecase struct {
 	Repo onef_posts.PostsRepository
 }
 
-func NewUsecase(repo onef_posts.PostsRepository) onef_posts.PostsUsecase {
+func NewPostsUsecase(repo onef_posts.PostsRepository) onef_posts.PostsUsecase {
 	return &postsUsecase{
 		Repo: repo,
 	}
