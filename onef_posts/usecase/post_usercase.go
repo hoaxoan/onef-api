@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"time"
 
 	"github.com/hoaxoan/onef-api/onef_core/model"
 	"github.com/hoaxoan/onef-api/onef_posts"
@@ -40,7 +41,7 @@ func (ucase *postUsecase) GetWithId(ctx context.Context, id int64, res *model.Po
 }
 
 func (ucase *postUsecase) CreatePost(ctx context.Context, req *model.CreatePostRequest, res *model.PostResponse) error {
-	post := model.Post{UUId: req.Text, Text: req.Text}
+	post := model.Post{UUId: req.UUId, Text: req.Text, Creator: req.Creator, CreatorId: &req.Creator.Id, Created: time.Now()}
 	if req.IsDraft {
 		post.Status = STATUS_DRAFT
 	} else {
@@ -55,17 +56,9 @@ func (ucase *postUsecase) CreatePost(ctx context.Context, req *model.CreatePostR
 }
 
 func (ucase *postUsecase) PublishPost(ctx context.Context, postUuid string, res *model.PostResponse) error {
-	post, err := ucase.Repo.GetPostWithUuid(postUuid)
-	if err != nil {
+	if err := ucase.Repo.UpdateStatus(postUuid, STATUS_PUBLISHED); err != nil {
 		return err
 	}
-
-	post.Status = STATUS_PUBLISHED
-
-	if err := ucase.Repo.Create(post); err != nil {
-		return err
-	}
-	res.Post = post
 	return nil
 }
 

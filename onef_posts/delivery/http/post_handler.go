@@ -4,10 +4,14 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 	"github.com/hoaxoan/onef-api/onef_core/model"
+	"github.com/hoaxoan/onef-api/onef_core/setting"
 	"github.com/hoaxoan/onef-api/onef_posts"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type postHandler struct {
@@ -23,8 +27,13 @@ func NewPostHandler(e *echo.Echo, uc onef_posts.PostUsecase) {
 }
 
 func PublicPostRoute(e *echo.Echo, handler *postHandler) {
-	g := e.Group("/api/v1/post")
-	g.GET("/:id", handler.GetWithId)
+	JWTConfig := middleware.JWTConfig{
+		SigningKey: []byte(setting.Config.JWTSecret.JWTKey),
+		Claims:     &model.CustomClaims{},
+	}
+
+	g := e.Group("/api/v1/posts")
+	g.Use(middleware.JWTWithConfig(JWTConfig))
 	g.GET("/:postUuid", handler.GetPostWithUuid)
 	g.POST("", handler.CreatePost)
 	g.PUT("/:postUuid", handler.EditPost)
@@ -49,13 +58,28 @@ func (h *postHandler) GetWithId(ctx echo.Context) error {
 }
 
 func (h *postHandler) CreatePost(ctx echo.Context) error {
-	var post model.CreatePostRequest
-	if err := ctx.Bind(&post); err != nil {
+	userToken := ctx.Get("user").(*jwt.Token)
+	if userToken == nil || userToken.Valid == false {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+	claims := userToken.Claims.(*model.CustomClaims)
+	if claims == nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+	user := claims.User
+	if user == nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: "token invalid"})
+	}
+
+	var createPost model.CreatePostRequest
+	if err := ctx.Bind(&createPost); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
+	createPost.Creator = user
+	createPost.UUId = uuid.New().String()
 	var res model.PostResponse
-	if err := h.UUcase.CreatePost(ctx.Request().Context(), &post, &res); err != nil {
+	if err := h.UUcase.CreatePost(ctx.Request().Context(), &createPost, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
@@ -103,7 +127,7 @@ func (h *postHandler) PublishPost(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusOK, res.Post)
+	return ctx.JSON(http.StatusOK, true)
 }
 
 func (h *postHandler) DeletePostWithUuid(ctx echo.Context) error {

@@ -10,7 +10,7 @@ type TopPost struct {
 }
 
 func (TopPost) TableName() string {
-	return "top_post"
+	return "toppost"
 }
 
 type TopPostRequest struct {

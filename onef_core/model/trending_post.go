@@ -10,7 +10,7 @@ type TrendingPost struct {
 }
 
 func (TrendingPost) TableName() string {
-	return "trending_post"
+	return "trendingpost"
 }
 
 type TrendingPostRequest struct {

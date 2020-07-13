@@ -21,11 +21,15 @@ type PostComment struct {
 	Language        *Language    `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
 }
 
+func (PostComment) TableName() string {
+	return "postcomment"
+}
+
 type PostCommentRequest struct {
 }
 
 type PostCommentResponse struct {
-	PostComment  *PostComment  `json:"post_comment,omitempty" bson:"post_comment"`
-	PostComments []PostComment `json:"post_comments,omitempty" bson:"post_comments"`
+	PostComment  *PostComment  `json:"comment,omitempty" bson:"comment"`
+	PostComments []PostComment `json:"comments,omitempty" bson:"comments"`
 	Errors       []*Error      `json:"errors,omitempty" bson:"errors"`
 }

@@ -35,12 +35,46 @@ func (repo *postRepository) GetPostWithUuid(postUuid string) (*model.Post, error
 	if dbc := repo.db.Where("uuid = ?", postUuid).First(&post); dbc.Error != nil {
 		return nil, dbc.Error
 	}
+
+	var creator model.User
+	if dbc := repo.db.Where("id = ?", post.CreatorId).First(&creator); dbc.Error == nil {
+		post.Creator = &creator
+	}
+
+	var community model.Community
+	if dbc := repo.db.Where("id = ?", post.CommunityId).First(&community); dbc.Error == nil {
+		post.Community = &community
+	}
+
+	var language model.Language
+	if dbc := repo.db.Where("id = ?", post.LanguageId).First(&language); dbc.Error == nil {
+		post.Language = &language
+	}
+
+	var postComments []model.PostComment
+	if dbc := repo.db.Where("post_id = ?", post.Id).Find(&postComments); dbc.Error == nil {
+		post.PostComments = postComments
+	}
+
+	var postReaction model.PostReaction
+	if dbc := repo.db.Where("post_id = ?", post.Id).First(&postReaction); dbc.Error == nil {
+		post.PostReaction = postReaction
+	}
+
 	return &post, nil
 }
 
 func (repo *postRepository) Create(post *model.Post) error {
 	if dbc := repo.db.Create(&post); dbc.Error != nil {
 		return dbc.Error
+	}
+	return nil
+}
+
+func (repo *postRepository) UpdateStatus(postUuuid string, status string) error {
+	err := repo.db.Model(&model.Post{}).Where("uuid = ?", postUuuid).Update("status", status).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }
