@@ -27,6 +27,31 @@ func (repo *postRepository) GetWithId(id int64) (*model.Post, error) {
 	if dbc := repo.db.Where("id = ?", id).First(&post); dbc.Error != nil {
 		return nil, dbc.Error
 	}
+
+	var creator model.User
+	if dbc := repo.db.Where("id = ?", post.CreatorId).First(&creator); dbc.Error == nil {
+		post.Creator = &creator
+	}
+
+	var community model.Community
+	if dbc := repo.db.Where("id = ?", post.CommunityId).First(&community); dbc.Error == nil {
+		post.Community = &community
+	}
+
+	var language model.Language
+	if dbc := repo.db.Where("id = ?", post.LanguageId).First(&language); dbc.Error == nil {
+		post.Language = &language
+	}
+
+	var postComments []model.PostComment
+	if dbc := repo.db.Where("post_id = ?", post.Id).Find(&postComments); dbc.Error == nil {
+		post.PostComments = postComments
+	}
+
+	var postReaction *model.PostReaction
+	if dbc := repo.db.Where("post_id = ?", post.Id).First(&postReaction); dbc.Error == nil {
+		post.PostReaction = postReaction
+	}
 	return &post, nil
 }
 
@@ -56,7 +81,7 @@ func (repo *postRepository) GetPostWithUuid(postUuid string) (*model.Post, error
 		post.PostComments = postComments
 	}
 
-	var postReaction model.PostReaction
+	var postReaction *model.PostReaction
 	if dbc := repo.db.Where("post_id = ?", post.Id).First(&postReaction); dbc.Error == nil {
 		post.PostReaction = postReaction
 	}

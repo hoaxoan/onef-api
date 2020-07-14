@@ -7,11 +7,12 @@ import (
 )
 
 type postsRepository struct {
-	db *gorm.DB
+	db       *gorm.DB
+	postRepo onef_posts.PostRepository
 }
 
-func NewPostsRepository(db *gorm.DB) onef_posts.PostsRepository {
-	return &postsRepository{db}
+func NewPostsRepository(db *gorm.DB, postRepo onef_posts.PostRepository) onef_posts.PostsRepository {
+	return &postsRepository{db, postRepo}
 }
 
 func (repo *postsRepository) GetTopPosts(req *model.TopPostRequest) ([]model.TopPost, error) {
@@ -19,7 +20,17 @@ func (repo *postsRepository) GetTopPosts(req *model.TopPostRequest) ([]model.Top
 	if dbc := repo.db.Find(&topPosts).Limit(req.Count); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return topPosts, nil
+
+	topPostList := make([]model.TopPost, 0)
+	for _, topPost := range topPosts {
+		if post, err := repo.postRepo.GetWithId(*topPost.PostId); err == nil {
+			topPost.Post = post
+		}
+
+		topPostList = append(topPostList, topPost)
+	}
+
+	return topPostList, nil
 }
 
 func (repo *postsRepository) GetTrendingPosts(req *model.TrendingPostRequest) ([]model.TrendingPost, error) {
@@ -27,7 +38,17 @@ func (repo *postsRepository) GetTrendingPosts(req *model.TrendingPostRequest) ([
 	if dbc := repo.db.Find(&trendingPosts).Limit(req.Count); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return trendingPosts, nil
+
+	trendingPostList := make([]model.TrendingPost, 0)
+	for _, trendingPost := range trendingPosts {
+		if post, err := repo.postRepo.GetWithId(*trendingPost.PostId); err == nil {
+			trendingPost.Post = post
+		}
+
+		trendingPostList = append(trendingPostList, trendingPost)
+	}
+
+	return trendingPostList, nil
 }
 
 func (repo *postsRepository) GetTimelinePosts(req *model.PostRequest) ([]model.Post, error) {
@@ -35,5 +56,15 @@ func (repo *postsRepository) GetTimelinePosts(req *model.PostRequest) ([]model.P
 	if dbc := repo.db.Find(&posts).Limit(req.Count); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return posts, nil
+
+	timelinePostList := make([]model.Post, 0)
+	for _, timelinePost := range posts {
+		if post, err := repo.postRepo.GetWithId(timelinePost.Id); err == nil {
+			timelinePostList = append(timelinePostList, *post)
+		} else {
+			timelinePostList = append(timelinePostList, timelinePost)
+		}
+	}
+
+	return timelinePostList, nil
 }

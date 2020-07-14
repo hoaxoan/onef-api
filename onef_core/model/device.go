@@ -11,6 +11,10 @@ type Device struct {
 	Owner   *User     `json:"owner,omitempty" gorm:"foreignkey:OwnerId" bson:"owner"`
 }
 
+func (Device) TableName() string {
+	return "device"
+}
+
 type DeviceRequest struct {
 }
 

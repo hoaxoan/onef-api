@@ -11,21 +11,24 @@ type Post struct {
 	CreatorId       *int64        `json:"creator_id,omitempty" gorm:"column:creator_id" bson:"creator_id"`
 	CommunityId     *int64        `json:"community_id,omitempty" gorm:"column:community_id" bson:"community_id"`
 	LanguageId      *int64        `json:"language_id,omitempty" gorm:"column:language_id" bson:"language_id"`
-	IsEdited        bool          `json:"is_edited,omitempty" gorm:"column:is_edited" bson:"is_edited"`
-	IsClosed        bool          `json:"is_closed,omitempty" gorm:"column:is_closed" bson:"is_closed"`
-	IsDeleted       bool          `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
 	MediaHeight     float32       `json:"media_height,omitempty" gorm:"column:media_height" bson:"media_height"`
 	MediaWidth      float32       `json:"media_width,omitempty" gorm:"column:media_width" bson:"media_width"`
 	MediaThumbnail  string        `json:"media_thumbnail,omitempty" gorm:"column:media_thumbnail" bson:"media_thumbnail"`
 	Status          string        `json:"status,omitempty" gorm:"column:status" bson:"status"`
 	Created         time.Time     `json:"created,omitempty" gorm:"column:created" bson:"created"`
 	Modified        time.Time     `json:"modified,omitempty" gorm:"column:modified" bson:"modified"`
+	IsMuted         bool          `json:"is_muted,omitempty" bson:"is_muted"`
+	IsEncircled     bool          `json:"is_encircled,omitempty" bson:"is_encircled"`
+	IsEdited        bool          `json:"is_edited,omitempty" gorm:"column:is_edited" bson:"is_edited"`
+	IsClosed        bool          `json:"is_closed,omitempty" gorm:"column:is_closed" bson:"is_closed"`
+	IsDeleted       bool          `json:"is_deleted,omitempty" gorm:"column:is_deleted" bson:"is_deleted"`
+	IsReported      bool          `json:"is_reported,omitempty" bson:"is_reported"`
 	Creator         *User         `json:"creator,omitempty" gorm:"foreignkey:CreatorId" bson:"creator"`
 	Community       *Community    `json:"community,omitempty" gorm:"foreignkey:CommunityId" bson:"community"`
 	Language        *Language     `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
 	PostComments    []PostComment `json:"comments,omitempty" bson:"comments"`
 	PostMedias      []PostMedia   `json:"media,omitempty" bson:"media"`
-	PostReaction    PostReaction  `json:"reaction,omitempty" bson:"reaction"`
+	PostReaction    *PostReaction `json:"reaction,omitempty" bson:"reaction"`
 }
 
 func (Post) TableName() string {

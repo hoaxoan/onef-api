@@ -15,7 +15,7 @@ func NewHandler(e *echo.Echo, db *gorm.DB) {
 	http.NewPostHandler(e, postUsecase)
 
 	// Posts
-	postsRepo := repository.NewPostsRepository(db)
+	postsRepo := repository.NewPostsRepository(db, postRepo)
 	postsUsecase := usecase.NewPostsUsecase(postsRepo)
 	http.NewPostsHandler(e, postsUsecase)
 }
