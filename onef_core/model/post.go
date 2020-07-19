@@ -36,12 +36,13 @@ func (Post) TableName() string {
 }
 
 type CreatePostRequest struct {
-	UUId          string `json:"uuid,omitempty"`
-	Text          string `json:"text,omitempty"`
-	CommunityName string `json:"community_name,omitempty"`
-	CircleId      string `json:"circle_id,omitempty"`
-	IsDraft       bool   `json:"is_draft,omitempty"`
-	Creator       *User  `json:"creator,omitempty"`
+	UUId          string   `json:"uuid,omitempty"`
+	Text          string   `json:"text,omitempty"`
+	CommunityName string   `json:"community_name,omitempty"`
+	CircleId      string   `json:"circle_id,omitempty"`
+	IsDraft       bool     `json:"is_draft,omitempty"`
+	Creator       *User    `json:"creator,omitempty"`
+	CircleIds     []string `json:"circle_ids,omitempty"`
 }
 
 type EditPostRequest struct {

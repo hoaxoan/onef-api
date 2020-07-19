@@ -26,6 +26,7 @@ type User struct {
 	Language              *Language    `json:"language,omitempty" gorm:"foreignkey:LanguageId" bson:"language"`
 	TranslationLanguage   *Language    `json:"translation_language,omitempty" gorm:"foreignkey:TranslationLanguageId" bson:"translation_language"`
 	Profile               *UserProfile `json:"profile,omitempty"`
+	ConnectionsCircleId   int64        `json:"connections_circle_id,omitempty" gorm:"-" bson:"connections_circle_id"`
 }
 
 type UserProfile struct {

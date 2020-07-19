@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/hoaxoan/onef-api/onef_core/model"
@@ -50,6 +51,19 @@ func (ucase *postUsecase) CreatePost(ctx context.Context, req *model.CreatePostR
 
 	if err := ucase.Repo.Create(&post); err != nil {
 		return err
+	}
+
+	if req.CircleIds != nil {
+		for _, id := range req.CircleIds {
+			circleId, err := strconv.ParseInt(id, 10, 64)
+			if err != nil {
+				continue
+			}
+
+			if err := ucase.Repo.CreateCirclePost(circleId, post.Id); err != nil {
+				return nil
+			}
+		}
 	}
 	res.Post = &post
 	return nil

@@ -86,6 +86,11 @@ func (repo *userRepository) GetUserWithUserName(userName string) (*model.User, e
 
 	user.Profile = &profile
 
+	var circle model.Circle
+	if dbc := repo.db.Where("creator_id = ?", user.Id).First(&circle); dbc.Error == nil {
+		user.ConnectionsCircleId = circle.Id
+	}
+
 	return &user, nil
 }
 

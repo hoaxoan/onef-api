@@ -14,13 +14,37 @@ func NewRepository(db *gorm.DB) onef_circles.Repository {
 	return &repository{db}
 }
 
-// Categories
 func (repo *repository) Get(req *model.CircleRequest) ([]model.Circle, error) {
 	var circles []model.Circle
-	if dbc := repo.db.Order("order asc").Find(&circles); dbc.Error != nil {
+	if dbc := repo.db.Find(&circles); dbc.Error != nil {
 		return nil, dbc.Error
 	}
-	return circles, nil
+
+	circleList := make([]model.Circle, 0)
+	for _, circle := range circles {
+		var creator model.User
+		if dbc := repo.db.Where("id = ?", circle.CreatorId).First(&creator); dbc.Error == nil {
+			circle.Creator = &creator
+		}
+		circleList = append(circleList, circle)
+	}
+
+	return circleList, nil
+
+}
+
+func (repo *repository) GetCircleWithId(circleId int64) (*model.Circle, error) {
+	var circle model.Circle
+	if dbc := repo.db.Where("id = ?", circleId).First(&circle); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+
+	var creator model.User
+	if dbc := repo.db.Where("id = ?", circle.CreatorId).First(&creator); dbc.Error == nil {
+		circle.Creator = &creator
+	}
+
+	return &circle, nil
 }
 
 func (repo *repository) Create(circle *model.Circle) error {
@@ -44,4 +68,12 @@ func (repo *repository) Delete(circle *model.Circle) error {
 		return err
 	}
 	return nil
+}
+
+func (repo *repository) CheckNameIsAvailable(req *model.Circle) (*model.Circle, error) {
+	var circle model.Circle
+	if dbc := repo.db.Where("name = ? AND creator_id = ?", req.Name, req.CreatorId).First(&circle); dbc.Error != nil {
+		return nil, dbc.Error
+	}
+	return &circle, nil
 }

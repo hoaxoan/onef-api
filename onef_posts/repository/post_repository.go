@@ -30,6 +30,12 @@ func (repo *postRepository) GetWithId(id int64) (*model.Post, error) {
 
 	var creator model.User
 	if dbc := repo.db.Where("id = ?", post.CreatorId).First(&creator); dbc.Error == nil {
+		var profile model.UserProfile
+		if dbc := repo.db.Where("user_id = ?", creator.Id).First(&profile); dbc.Error != nil {
+			return nil, dbc.Error
+		}
+
+		creator.Profile = &profile
 		post.Creator = &creator
 	}
 
@@ -63,6 +69,12 @@ func (repo *postRepository) GetPostWithUuid(postUuid string) (*model.Post, error
 
 	var creator model.User
 	if dbc := repo.db.Where("id = ?", post.CreatorId).First(&creator); dbc.Error == nil {
+		var profile model.UserProfile
+		if dbc := repo.db.Where("user_id = ?", creator.Id).First(&profile); dbc.Error != nil {
+			return nil, dbc.Error
+		}
+
+		creator.Profile = &profile
 		post.Creator = &creator
 	}
 
@@ -116,6 +128,14 @@ func (repo *postRepository) Delete(post *model.Post) error {
 	err := repo.db.Where("id = ?", post.Id).Delete(&post).Error
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (repo *postRepository) CreateCirclePost(circleId int64, postId int64) error {
+	circlePost := model.CirclePost{CircleId: &circleId, PostId: &postId}
+	if dbc := repo.db.Create(&circlePost); dbc.Error != nil {
+		return dbc.Error
 	}
 	return nil
 }

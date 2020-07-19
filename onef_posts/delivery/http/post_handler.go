@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -78,6 +79,11 @@ func (h *postHandler) CreatePost(ctx echo.Context) error {
 
 	createPost.Creator = user
 	createPost.UUId = uuid.New().String()
+
+	if createPost.CircleId != "" && len(strings.TrimSpace(createPost.CircleId)) > 0 {
+		createPost.CircleIds = strings.Split(createPost.CircleId, ",")
+	}
+
 	var res model.PostResponse
 	if err := h.UUcase.CreatePost(ctx.Request().Context(), &createPost, &res); err != nil {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})

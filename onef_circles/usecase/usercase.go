@@ -26,6 +26,15 @@ func (ucase *usecase) Get(ctx context.Context, req *model.CircleRequest, res *mo
 	return nil
 }
 
+func (ucase *usecase) GetCircleWithId(ctx context.Context, circleId int64, res *model.CircleResponse) error {
+	circle, err := ucase.Repo.GetCircleWithId(circleId)
+	if err != nil {
+		return err
+	}
+	res.Circle = circle
+	return nil
+}
+
 func (ucase *usecase) Create(ctx context.Context, req *model.Circle, res *model.CircleResponse) error {
 	if err := ucase.Repo.Create(req); err != nil {
 		return err
@@ -34,18 +43,37 @@ func (ucase *usecase) Create(ctx context.Context, req *model.Circle, res *model.
 	return nil
 }
 
-func (ucase *usecase) Update(ctx context.Context, req *model.Circle, res *model.CircleResponse) error {
-	if err := ucase.Repo.Update(req); err != nil {
+func (ucase *usecase) UpdateCircleWithId(ctx context.Context, req *model.UpdateCircleRequest, res *model.CircleResponse) error {
+	circle, err := ucase.Repo.GetCircleWithId(req.Id)
+	if err != nil {
 		return err
 	}
-	res.Circle = req
+
+	circle.Name = req.Name
+	circle.Color = req.Color
+
+	if err := ucase.Repo.Update(circle); err != nil {
+		return err
+	}
+	res.Circle = circle
 	return nil
 }
 
-func (ucase *usecase) Delete(ctx context.Context, req *model.Circle, res *model.CircleResponse) error {
-	if err := ucase.Repo.Delete(req); err != nil {
+func (ucase *usecase) DeleteCircleWithId(ctx context.Context, circleId int64, res *model.CircleResponse) error {
+	circle := model.Circle{}
+	circle.Id = circleId
+	if err := ucase.Repo.Delete(&circle); err != nil {
 		return err
 	}
-	res.Circle = req
+	res.Circle = &circle
+	return nil
+}
+
+func (ucase *usecase) CheckNameIsAvailable(ctx context.Context, req *model.Circle, res *model.CircleResponse) error {
+	circle, err := ucase.Repo.CheckNameIsAvailable(req)
+	if err != nil {
+		return err
+	}
+	res.Circle = circle
 	return nil
 }

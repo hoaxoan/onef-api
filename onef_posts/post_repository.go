@@ -12,4 +12,5 @@ type PostRepository interface {
 	Create(post *model.Post) error
 	Update(post *model.Post) error
 	Delete(post *model.Post) error
+	CreateCirclePost(circleId int64, postId int64) error
 }

@@ -47,7 +47,7 @@ func (repo *repository) Delete(device *model.Device) error {
 
 func (repo *repository) GetDeviceWithUuid(deviceUuid string) (*model.Device, error) {
 	var device model.Device
-	if dbc := repo.db.Where("uuid = ?", deviceUuid).First(device); dbc.Error != nil {
+	if dbc := repo.db.Where("uuid = ?", deviceUuid).First(&device); dbc.Error != nil {
 		return nil, dbc.Error
 	}
 	return &device, nil
