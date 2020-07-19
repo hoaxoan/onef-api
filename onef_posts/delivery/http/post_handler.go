@@ -89,7 +89,7 @@ func (h *postHandler) CreatePost(ctx echo.Context) error {
 		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
 	}
 
-	return ctx.JSON(http.StatusOK, res.Post)
+	return ctx.JSON(http.StatusCreated, res.Post)
 }
 
 func (h *postHandler) GetPostWithUuid(ctx echo.Context) error {
