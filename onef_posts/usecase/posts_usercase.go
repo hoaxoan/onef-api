@@ -43,3 +43,30 @@ func (ucase *postsUsecase) GetTimelinePosts(ctx context.Context, req *model.Post
 	res.Posts = posts
 	return nil
 }
+
+func (ucase *postsUsecase) GetPostComment(ctx context.Context, postUuid string, postCommentId int64, res *model.PostCommentResponse) error {
+	postComment, err := ucase.Repo.GetPostComment(postUuid, postCommentId)
+	if err != nil {
+		return err
+	}
+	res.PostComment = postComment
+	return nil
+}
+
+func (ucase *postsUsecase) GetCommentsForPostWithUuid(ctx context.Context, req *model.PostCommentRequest, res *model.PostCommentResponse) error {
+	postComments, err := ucase.Repo.GetCommentsForPostWithUuid(req)
+	if err != nil {
+		return err
+	}
+	res.PostComments = postComments
+	return nil
+}
+
+func (ucase *postsUsecase) GetRepliesForCommentWithIdForPostWithUuid(ctx context.Context, req *model.PostCommentRequest, res *model.PostCommentResponse) error {
+	postComments, err := ucase.Repo.GetRepliesForCommentWithIdForPostWithUuid(req)
+	if err != nil {
+		return err
+	}
+	res.PostComments = postComments
+	return nil
+}

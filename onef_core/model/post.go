@@ -50,11 +50,11 @@ type EditPostRequest struct {
 }
 
 type PostRequest struct {
-	ListId   string `json:"list_id,omitempty"`
-	CircleId string `json:"circle_id,omitempty"`
-	Count    int64  `json:"count,omitempty"`
-	MaxId    int64  `json:"max_id,omitempty"`
-	UserName string `json:"username,omitempty"`
+	ListIds   []int64 `json:"list_id,omitempty"`
+	CircleIds []int64 `json:"circle_id,omitempty"`
+	Count     int64   `json:"count,omitempty"`
+	MaxId     int64   `json:"max_id,omitempty"`
+	UserName  string  `json:"username,omitempty"`
 }
 
 type PostResponse struct {

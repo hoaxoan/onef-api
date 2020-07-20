@@ -13,6 +13,10 @@ type PostReaction struct {
 	Post      *Post     `json:"post,omitempty" gorm:"foreignkey:PostId" bson:"post"`
 }
 
+func (PostReaction) TableName() string {
+	return "postreaction"
+}
+
 type PostReactionRequest struct {
 }
 

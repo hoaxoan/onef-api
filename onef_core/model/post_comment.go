@@ -26,6 +26,9 @@ func (PostComment) TableName() string {
 }
 
 type PostCommentRequest struct {
+	Count    int64  `json:"count,omitempty"`
+	MaxId    int64  `json:"max_id,omitempty"`
+	UserName string `json:"username,omitempty"`
 }
 
 type PostCommentResponse struct {

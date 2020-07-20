@@ -54,9 +54,9 @@ func (repo *postRepository) GetWithId(id int64) (*model.Post, error) {
 		post.PostComments = postComments
 	}
 
-	var postReaction *model.PostReaction
+	var postReaction model.PostReaction
 	if dbc := repo.db.Where("post_id = ?", post.Id).First(&postReaction); dbc.Error == nil {
-		post.PostReaction = postReaction
+		post.PostReaction = &postReaction
 	}
 	return &post, nil
 }
