@@ -36,6 +36,7 @@ func PublicPostRoute(e *echo.Echo, handler *postHandler) {
 	g := e.Group("/api/v1/posts")
 	g.Use(middleware.JWTWithConfig(JWTConfig))
 	g.GET("/:postUuid", handler.GetPostWithUuid)
+	g.GET("/:postUuid/status", handler.GetPostWithUuidStatus)
 	g.POST("", handler.CreatePost)
 	g.PUT("/:postUuid", handler.EditPost)
 	g.POST("/:postUuid/publish", handler.PublishPost)
@@ -93,6 +94,16 @@ func (h *postHandler) CreatePost(ctx echo.Context) error {
 }
 
 func (h *postHandler) GetPostWithUuid(ctx echo.Context) error {
+	postUuid := ctx.Param("postUuid")
+
+	var res model.PostResponse
+	if err := h.UUcase.GetPostWithUuid(ctx.Request().Context(), postUuid, &res); err != nil {
+		return ctx.JSON(http.StatusBadRequest, model.Error{Code: http.StatusBadRequest, Description: err.Error()})
+	}
+	return ctx.JSON(http.StatusOK, res.Post)
+}
+
+func (h *postHandler) GetPostWithUuidStatus(ctx echo.Context) error {
 	postUuid := ctx.Param("postUuid")
 
 	var res model.PostResponse
